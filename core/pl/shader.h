@@ -13,7 +13,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace ccarreon {
+namespace pl {
 	class Shader {
 	public:
 		unsigned int ID;

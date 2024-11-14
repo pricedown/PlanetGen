@@ -11,7 +11,7 @@
 #include "../ew/external/glad.h"
 #include "../ew/external/stb_image.h"
 
-namespace ccarreon {
+namespace pl {
     class Texture2D {
     public:
         Texture2D(const char* filePath, int filterMode, int wrapMode);

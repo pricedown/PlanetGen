@@ -1,6 +1,6 @@
 #include "shader.h"
 
-using namespace ccarreon;
+using namespace pl;
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
 	// Get vertex and fragment shader code from fields

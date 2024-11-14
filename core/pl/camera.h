@@ -19,7 +19,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-namespace ccarreon {
+namespace pl {
 	class Camera {
 	public:
 		Camera(float width, float height);

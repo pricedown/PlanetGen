@@ -16,9 +16,9 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "ccarreon/shader.h"
-#include "ccarreon/texture2d.h"
-#include "ccarreon/camera.h"
+#include "pl/shader.h"
+#include "pl/texture2d.h"
+#include "pl/camera.h"
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
@@ -66,7 +66,7 @@ float boxVertices[] = {
 	-0.5f,  0.5f,  0.5f,	0.0f, 0.0f,      0.0f,  1.0f,  0.0f,
 	-0.5f,  0.5f, -0.5f,	0.0f, 1.0f,      0.0f,  1.0f,  0.0f
 };
-glm::vec3 cubePositions[] = {
+glm::vec3 boxPositions[] = {
 	glm::vec3(0.0f,  0.0f,  0.0f),
 	glm::vec3(2.0f,  5.0f, -15.0f),
 	glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -78,10 +78,11 @@ glm::vec3 cubePositions[] = {
 	glm::vec3(1.5f,  0.2f, -1.5f),
 	glm::vec3(-1.3f,  1.0f, -1.5f)
 };
-unsigned int indices[] = {
+unsigned int quadIndices[] = {
 	0, 1, 3,
 	1, 2, 3  
 };
+
 glm::vec3 lightPos(0.0f, 5.0f, -5.0f);
 glm::vec3 lightColor(1.0f, 0.0f, 0.0f);
 float textureMix = 0.2f;
@@ -89,7 +90,9 @@ float ambientStrength = 0.1f;
 float diffuseStrength = 1.0f;
 float specularStrength = 0.5f;
 int shininess = 32;
+
 int main() {
+	#pragma region Initialization
 	printf("Initializing...");
 	if (!glfwInit()) {
 		printf("GLFW failed to init!");
@@ -111,7 +114,11 @@ int main() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init();
 
-	//Initialization goes here!
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	glEnable(GL_DEPTH_TEST);
+	#pragma endregion
+	#pragma region Geometry Vertex Data
 	unsigned int VAO, VBO, EBO;
 
 	glGenVertexArrays(1, &VAO);
@@ -132,7 +139,7 @@ int main() {
 
 	//NEWER OPTION:  glNamedBufferData(VBO, sizeof(vertices), vertices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), quadIndices, GL_STATIC_DRAW);
 
 	//POSITION (XYZ)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -145,31 +152,24 @@ int main() {
 	//NORMALS (XYZ)
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 5));
 	glEnableVertexAttribArray(2);
+	#pragma endregion
 
-	ccarreon::Shader boxShader("assets/boxVertexShader.vert", "assets/boxFragmentShader.frag");
-	ccarreon::Texture2D boxTexture("assets/container.jpg", GL_LINEAR, GL_REPEAT);
-	ccarreon::Texture2D faceTexture("assets/awesomeface.png", GL_LINEAR, GL_REPEAT);
+	pl::Shader boxShader("assets/boxVertexShader.vert", "assets/boxFragmentShader.frag");
+	pl::Texture2D boxTexture("assets/container.jpg", GL_LINEAR, GL_REPEAT);
+	pl::Texture2D faceTexture("assets/awesomeface.png", GL_LINEAR, GL_REPEAT);
 
-	glEnable(GL_DEPTH_TEST);
-
-	//PROJECTION
+	pl::Camera camera(SCREEN_WIDTH, SCREEN_HEIGHT);
 	glm::mat4 projection;
 
-	ccarreon::Camera camera(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-	// Activate the shader
 	boxShader.use();
 	boxShader.setInt("texture1", 0);
 	boxShader.setInt("texture2", 1);
 
-	//MOUSE
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	//Render loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		float time = (float)glfwGetTime();
 
+		#pragma region ImGUI
 		//ImGUI start
 		ImGui_ImplGlfw_NewFrame();
 		ImGui_ImplOpenGL3_NewFrame();
@@ -185,14 +185,11 @@ int main() {
 		ImGui::SliderInt("Shininess", &shininess, 2,1024);
 		ImGui::SliderFloat("Texture Mix", &textureMix, 0.0f, 1.0f);
 		ImGui::End();
+		#pragma endregion
 
-		//Get user input
 		camera.use(window);
-
-		//Set projcective perspection
 		camera.projectionSwap(projection);
 
-		// Clear framebuffer
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -208,7 +205,6 @@ int main() {
 		boxShader.setVec3("lightColor", lightColor);
 		boxShader.setBool("override", false);
 
-		// Bind textures
 		boxTexture.Bind(0);
 		faceTexture.Bind(1);
 
@@ -216,10 +212,7 @@ int main() {
 		glm::mat4 view = glm::mat4(1.0f);
 		camera.viewLookAt(view);
 
-		// Lighting
-		float specularStrength = 0.5;
-
-		//Send matrices to shader
+		// Send matrices to shader
 		unsigned int viewLoc = glGetUniformLocation(boxShader.ID, "view");
 		unsigned int projectionLoc = glGetUniformLocation(boxShader.ID, "projection");
 
@@ -236,7 +229,7 @@ int main() {
 		for (unsigned int i = 0; i < 10; i++)
 		{
 			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
+			model = glm::translate(model, boxPositions[i]);
 			float angle = 20.0f * (i + 1);
 			model = glm::rotate(model, (float)glfwGetTime() + glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
 			unsigned int modelLoc = glGetUniformLocation(boxShader.ID, "model");

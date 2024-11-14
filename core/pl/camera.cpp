@@ -1,6 +1,6 @@
 #include "camera.h"
 
-using namespace ccarreon;
+using namespace pl;
 
 Camera::Camera(float width, float height) {
 	SCREEN_WIDTH = width;
