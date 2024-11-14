@@ -103,8 +103,8 @@ void Camera::use(GLFWwindow* window) {
 	// Set the user pointer to this camera instance for the window
 	glfwSetWindowUserPointer(window, this);
 }
-void Camera::projectionSwap(glm::mat4& projection) {
-	//Switch between projection and orthographic
+void Camera::setProjection(glm::mat4& projection) {
+	// Switch between projection and orthographic
 	if (perspective) projection = glm::perspective(glm::radians(fov), ((float)SCREEN_WIDTH / SCREEN_HEIGHT), 0.1f, 1000.0f);
 	else projection = glm::ortho(-2.0f, 2.0f, -2.0f * ((float)SCREEN_HEIGHT / SCREEN_WIDTH), 2.0f * ((float)SCREEN_HEIGHT / SCREEN_WIDTH), 0.1f, 1000.0f);
 }

@@ -166,34 +166,36 @@ int main() {
 	boxShader.setInt("texture2", 1);
 
 	while (!glfwWindowShouldClose(window)) {
+		// Inputs
 		glfwPollEvents();
+		
+		// Update
 		float time = (float)glfwGetTime();
-
-		#pragma region ImGUI
-		//ImGUI start
-		ImGui_ImplGlfw_NewFrame();
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui::NewFrame();
-
-		//Settings window
-		ImGui::Begin("Settings");
-		ImGui::DragFloat3("Light Position", &lightPos.x, 0.1f);
-		ImGui::ColorEdit3("Light Color", &lightColor.r);
-		ImGui::SliderFloat("Ambient K", &ambientStrength, 0.0f, 1.0f);
-		ImGui::SliderFloat("Diffuse K", &diffuseStrength, 0.0f, 1.0f);
-		ImGui::SliderFloat("Specular K", &specularStrength, 0.0f, 1.0f);
-		ImGui::SliderInt("Shininess", &shininess, 2,1024);
-		ImGui::SliderFloat("Texture Mix", &textureMix, 0.0f, 1.0f);
-		ImGui::End();
-		#pragma endregion
+		float currentFrame = glfwGetTime();
 
 		camera.use(window);
-		camera.projectionSwap(projection);
+		camera.timeChange(currentFrame);
 
+		camera.setProjection(projection);
+		glm::mat4 view = glm::mat4(1.0f);
+		camera.viewLookAt(view);
+
+		// Draw
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Set uniforms
+		// light box
+		glm::mat4 lightModel = glm::mat4(1.0f);
+		lightModel = glm::translate(lightModel, lightPos);
+		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+		boxShader.setMat4("model", lightModel);
+		boxShader.setBool("override", true); // light cube overrides color settings
+		glBindVertexArray(lightVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		// spinning boxes
+		boxShader.setMat4("view", view);
+		boxShader.setMat4("projection", projection);
 		boxShader.setFloat("uTime", time);
 		boxShader.setFloat("textureMix", textureMix);
 		boxShader.setFloat("ambientStrength", ambientStrength);
@@ -208,53 +210,37 @@ int main() {
 		boxTexture.Bind(0);
 		faceTexture.Bind(1);
 
-		// View
-		glm::mat4 view = glm::mat4(1.0f);
-		camera.viewLookAt(view);
-
-		// Send matrices to shader
-		unsigned int viewLoc = glGetUniformLocation(boxShader.ID, "view");
-		unsigned int projectionLoc = glGetUniformLocation(boxShader.ID, "projection");
-
-		float currentFrame = glfwGetTime();
-		camera.timeChange(currentFrame);
-		
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-		// Update vertex buffer if necessary
-		glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices, GL_STATIC_DRAW);
-
-		// Draw elements
 		for (unsigned int i = 0; i < 10; i++)
 		{
+			float angle = 20.0f * (i + 1); // different cube orientations
+
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, boxPositions[i]);
-			float angle = 20.0f * (i + 1);
 			model = glm::rotate(model, (float)glfwGetTime() + glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			unsigned int modelLoc = glGetUniformLocation(boxShader.ID, "model");
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+			boxShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		// Make Light Cube
-		glm::mat4 lightModel = glm::mat4(1.0f);
-		lightModel = glm::translate(lightModel, lightPos);
-		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-		unsigned int modelLoc = glGetUniformLocation(boxShader.ID, "model");
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(lightModel));
+		#pragma region ImGUI
+		ImGui_ImplGlfw_NewFrame();
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui::NewFrame();
 
-		// Make light cube override color settings
-		boxShader.setBool("override", true);
+		ImGui::Begin("Light Settings");
+		ImGui::DragFloat3("Light Position", &lightPos.x, 0.1f);
+		ImGui::ColorEdit3("Light Color", &lightColor.r);
+		ImGui::SliderFloat("Ambient K", &ambientStrength, 0.0f, 1.0f);
+		ImGui::SliderFloat("Diffuse K", &diffuseStrength, 0.0f, 1.0f);
+		ImGui::SliderFloat("Specular K", &specularStrength, 0.0f, 1.0f);
+		ImGui::SliderInt("Shininess", &shininess, 2,1024);
+		ImGui::SliderFloat("Texture Mix", &textureMix, 0.0f, 1.0f);
+		ImGui::End();
 
-		glBindVertexArray(lightVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		//ImGui render
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		#pragma endregion
 
-		// Swap buffers
 		glfwSwapBuffers(window);
 	}
 	printf("Shutting down...");
