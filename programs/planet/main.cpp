@@ -20,6 +20,7 @@
 #include "pl/texture2d.h"
 #include "pl/camera.h"
 #include "pl/geometry.h"
+#include "pl/noise.h"
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
@@ -91,6 +92,16 @@ int main() {
 	if (!gladLoadGL(glfwGetProcAddress)) {
 		printf("GLAD Failed to load GL headers");
 		return 1;
+	}
+
+	pl::Noise noise;
+
+	float from = noise.noise();
+	float to = noise.noise();
+
+	std::cout << std::endl;
+	for (float i = 0; i < 1; i += 0.05) {
+		std::cout << noise.interpolate(from, to, i) << std::endl;
 	}
 
 	IMGUI_CHECKVERSION();
