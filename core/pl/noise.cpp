@@ -37,4 +37,5 @@ float Noise::interpolateNoise(float x, float y) {
 	int intY = int(y);
 	float fracX = x - intX;
 	float fracY = y - intY;
+	return 0.0;
 }
