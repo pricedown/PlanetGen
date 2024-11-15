@@ -20,12 +20,9 @@
 #include "pl/texture2d.h"
 #include "pl/camera.h"
 #include "pl/geometry.h"
-<<<<<<< HEAD
 #include "pl/noise.h"
-=======
 #include "pl/mesh.h"
 #include "pl/lighting.h"
->>>>>>> e35cf07c2af7eb341e1859c7bc559698016d12fb
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
