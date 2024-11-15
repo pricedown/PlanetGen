@@ -14,11 +14,16 @@ namespace pl {
 	class Noise {
 	public:
 		Noise();
+		Noise(int p, int no);
 		float noise();
 		float noise(int min, int max);
 		float interpolate(float from, float to, float mix);
 		float smoothNoise(float x, float y);
 		float interpolateNoise(float x, float y);
+		float perlinNoise2D(float x, float y);
+	private:
+		int persistence;
+		int numOctaves;
 	};
 #endif
 }

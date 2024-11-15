@@ -6,6 +6,12 @@ Noise::Noise() {
 	srand(time(NULL));
 }
 
+Noise::Noise(int p, int no) {
+	persistence = p;
+	numOctaves = no;
+	srand(time(NULL));
+}
+
 float Noise::noise() {
 	return ((float)rand() / RAND_MAX) * 2 - 1;
 	//https://www.sololearn.com/en/Discuss/280755/random-floats-in-c
@@ -37,5 +43,27 @@ float Noise::interpolateNoise(float x, float y) {
 	int intY = int(y);
 	float fracX = x - intX;
 	float fracY = y - intY;
-	return 0.0;
+
+	float v1 = smoothNoise(intX, intY);
+	float v2 = smoothNoise(intX + 1, intY);
+	float v3 = smoothNoise(intX, intY + 1);
+	float v4 = smoothNoise(intX + 1, intY + 1);
+
+	int i1 = interpolate(v1, v2, fracX);
+	int i2 = interpolate(v3, v4, fracX);
+
+	return interpolate(i1, i2, fracY);
+}
+
+float Noise::perlinNoise2D(float x, float y) {
+	int total = 0;
+	int n = numOctaves - 1;
+
+	for (int i = 0; i < n; i++) {
+		int frequency = pow(2, i);
+		int amplitude = pow(persistence, i);
+
+		total += interpolateNoise(x * frequency, y * frequency) * amplitude;
+	}
+	return total;
 }
