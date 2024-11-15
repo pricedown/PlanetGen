@@ -146,13 +146,14 @@ int main() {
 
 		for (unsigned int i = 0; i < pl::CUBENUM; i++)
 		{
+			pl::Mesh boxMesh(pl::cubeVertices);
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, pl::cubePositions[i]);
 			model = glm::rotate(model, pl::cubeRotationAngles[i], pl::cubeRotations[i]);
 			model = glm::scale(model, pl::cubeScales[i]);
 			boxShader.setMat4("model", model);
-
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			boxMesh.DrawArray(boxShader);
+			//glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
 #pragma region ImGui

@@ -54,7 +54,22 @@ Mesh::Mesh(const float vArray[])
         vertices.push_back(v);
     }
 
-    setupVAO();
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vArray), vArray, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 3));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 6));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //setupVAO();
 }
 
 void Mesh::setupVAO()
@@ -109,10 +124,9 @@ void Mesh::setupVAOEBO()
 }
 
 void Mesh::DrawArray(Shader& shader) {
-
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, this->vertices.size());
-    glBindVertexArray(0);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    //glBindVertexArray(0);
 }
 
 void Mesh::Draw(Shader& shader)
