@@ -23,82 +23,73 @@
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 
-float boxVertices[] = {
-	-0.5f, -0.5f, -0.5f,	0.0f, 0.0f,      0.0f,  0.0f, -1.0f,
-	 0.5f, -0.5f, -0.5f,	1.0f, 0.0f,      0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,	1.0f, 1.0f,      0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,	1.0f, 1.0f,      0.0f,  0.0f, -1.0f,
-	-0.5f,  0.5f, -0.5f,	0.0f, 1.0f,      0.0f,  0.0f, -1.0f,
-	-0.5f, -0.5f, -0.5f,	0.0f, 0.0f,      0.0f,  0.0f, -1.0f,
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
 
-	-0.5f, -0.5f,  0.5f,	0.0f, 0.0f,      0.0f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,	1.0f, 0.0f,      0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,	1.0f, 1.0f,      0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,	1.0f, 1.0f,      0.0f,  0.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,	0.0f, 1.0f,      0.0f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,	0.0f, 0.0f,      0.0f,  0.0f, 1.0f,
+pl::Camera camera(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	-0.5f,  0.5f,  0.5f,	1.0f, 0.0f,     -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f,	1.0f, 1.0f,     -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,     -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,     -1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f,	0.0f, 0.0f,     -1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f,	1.0f, 0.0f,     -1.0f,  0.0f,  0.0f,
+const unsigned int CUBENUM = 20;
+glm::vec3 cubePositions[CUBENUM];
+glm::vec3 cubeScales[CUBENUM];
+glm::vec3 cubeRotations[CUBENUM];
+glm::vec3 cubeRotationDirs[CUBENUM];
+float cubeRotationAngles[CUBENUM];
+float cubeRotationSpeed = 0.7f;
 
-	 0.5f,  0.5f,  0.5f,	1.0f, 0.0f,      1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,	1.0f, 1.0f,      1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,	0.0f, 1.0f,      1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,	0.0f, 1.0f,      1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,	0.0f, 0.0f,      1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,	1.0f, 0.0f,      1.0f,  0.0f,  0.0f,
+const float cubeVertices[] = {
+	// position				normal				uv
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,   0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,   1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,   1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,   1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,   0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,   0.0f, 0.0f,
 
-	-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,      0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,	1.0f, 1.0f,      0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,	1.0f, 0.0f,      0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,	1.0f, 0.0f,      0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f,	0.0f, 0.0f,      0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,	0.0f, 1.0f,      0.0f, -1.0f,  0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,   0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,   1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,   1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,   1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,   0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,   0.0f, 0.0f,
 
-	-0.5f,  0.5f, -0.5f,	0.0f, 1.0f,      0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,	1.0f, 1.0f,      0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,	1.0f, 0.0f,      0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,	1.0f, 0.0f,      0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f,	0.0f, 0.0f,      0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f,	0.0f, 1.0f,      0.0f,  1.0f,  0.0f
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,   1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,   1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,   0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,   0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,   0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,   1.0f, 0.0f,
+
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,   1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,   1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,   0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,   0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,   0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,   1.0f, 0.0f,
+
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,   0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,   1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,   1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,   1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,   0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,   0.0f, 1.0f,
+
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,   0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,   1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,   1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,   1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,   0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,   0.0f, 1.0f,
 };
-glm::vec3 boxPositions[] = {
-	glm::vec3(0.0f,  0.0f,  0.0f),
-	glm::vec3(2.0f,  5.0f, -15.0f),
-	glm::vec3(-1.5f, -2.2f, -2.5f),
-	glm::vec3(-3.8f, -2.0f, -12.3f),
-	glm::vec3(2.4f, -0.4f, -3.5f),
-	glm::vec3(-1.7f,  3.0f, -7.5f),
-	glm::vec3(1.3f, -2.0f, -2.5f),
-	glm::vec3(1.5f,  2.0f, -2.5f),
-	glm::vec3(1.5f,  0.2f, -1.5f),
-	glm::vec3(-1.3f,  1.0f, -1.5f)
-};
-unsigned int quadIndices[] = {
-	0, 1, 3,
-	1, 2, 3  
-};
-
-glm::vec3 lightPos(0.0f, 5.0f, -5.0f);
-glm::vec3 lightColor(1.0f, 0.0f, 0.0f);
-float textureMix = 0.2f;
-float ambientStrength = 0.1f;
-float diffuseStrength = 1.0f;
-float specularStrength = 0.5f;
-int shininess = 32;
 
 int main() {
 	#pragma region Initialization
 	printf("Initializing...");
+	GLFWwindow* window;
 	if (!glfwInit()) {
 		printf("GLFW failed to init!");
 		return 1;
 	}
-	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Lighting", NULL, NULL);
+	window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello Triangle", NULL, NULL);
 	if (window == NULL) {
 		printf("GLFW failed to create window");
 		return 1;
@@ -114,127 +105,135 @@ int main() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init();
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	glEnable(GL_DEPTH_TEST);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); //Unlocks mouse
 	#pragma endregion
-	#pragma region Geometry Vertex Data
+	#pragma region Geometry data
 	unsigned int VAO, VBO, EBO;
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
+
 	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-
-	unsigned int lightVAO;
-	glGenVertexArrays(1, &lightVAO);
-	glBindVertexArray(lightVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	//LIGHT POSITION (XYZ)
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 3));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 6));
 	glEnableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(boxVertices), boxVertices, GL_STATIC_DRAW);
-
-	//NEWER OPTION:  glNamedBufferData(VBO, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quadIndices), quadIndices, GL_STATIC_DRAW);
-
-	//POSITION (XYZ)
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	//TEXTURE (UV)
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 3));
 	glEnableVertexAttribArray(1);
-
-	//NORMALS (XYZ)
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 5));
 	glEnableVertexAttribArray(2);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	#pragma endregion
+	#pragma region World
+	for (int i = 0; i < CUBENUM; i++) {
+		float cubeBounds = 6.0f;
+		float fieldStartsAt = -0.0f;
+		cubePositions[i].x = ew::RandomRange(-cubeBounds, cubeBounds);
+		cubePositions[i].y = ew::RandomRange(-cubeBounds, cubeBounds);
+		cubePositions[i].z = ew::RandomRange(fieldStartsAt + cubeBounds / 2.0f, fieldStartsAt - cubeBounds / 2.0f);
+
+		float cubeMinScale = 0.25f;
+		float cubeMaxScale = 1.2f;
+		cubeScales[i] = glm::vec3(ew::RandomRange(cubeMinScale, cubeMaxScale));
+
+		float cubeRotationAngle = ew::RandomRange(0.0f, 3.0f);
+		cubeRotations[i] = cubeRotationAngle * glm::vec3(ew::RandomRange(-1.0f, 1.0f), ew::RandomRange(-1.0f, 1.0f), ew::RandomRange(-1.0f, 1.0f));
+		cubeRotationDirs[i] = glm::vec3(ew::RandomRange(-1.0f, 1.0f), ew::RandomRange(-1.0f, 1.0f), ew::RandomRange(-1.0f, 1.0f));
+		cubeRotationAngles[i] = 0.0f;
+	}
 	#pragma endregion
 
-	pl::Shader boxShader("assets/boxVertexShader.vert", "assets/boxFragmentShader.frag");
-	pl::Texture2D boxTexture("assets/container.jpg", GL_LINEAR, GL_REPEAT);
-	pl::Texture2D faceTexture("assets/awesomeface.png", GL_LINEAR, GL_REPEAT);
+	pl::Shader boxShader = pl::Shader("assets/shaders/cube.vert", "assets/shaders/cube.frag");
+	pl::Shader lightShader = pl::Shader("assets/shaders/light.vert", "assets/shaders/light.frag");
+	pl::Texture2D container = pl::Texture2D("assets/textures/container.jpg", GL_LINEAR, GL_REPEAT);
 
-	pl::Camera camera(SCREEN_WIDTH, SCREEN_HEIGHT);
-	glm::mat4 projection;
+	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+	float ambientK = 0.1f, specularK = 0.5f, diffuseK = 0.5f;
+	float shininess = 18.0f;
+	bool blinnPhong = true;
 
-	boxShader.use();
-	boxShader.setInt("texture1", 0);
-	boxShader.setInt("texture2", 1);
+	camera.setPosition(glm::vec3(-2.98126, 0.321037, 1.68709));
+	camera.setFront(glm::vec3(0.855282, -0.0662739, -0.513907));
 
 	while (!glfwWindowShouldClose(window)) {
 		// Inputs
 		glfwPollEvents();
-		
+
 		// Update
-		float time = (float)glfwGetTime();
-		float currentFrame = glfwGetTime();
+		float time = glfwGetTime();
+		deltaTime = time - lastFrame;
+		lastFrame = time;
 
 		camera.use(window);
-		camera.timeChange(currentFrame);
+		camera.timeChange(time);
 
-		camera.setProjection(projection);
-		glm::mat4 view = glm::mat4(1.0f);
-		camera.viewLookAt(view);
+		glm::mat4 projection = camera.projection();
+		glm::mat4 view = camera.viewLookAt();
 
 		// Draw
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// background
+		glClearColor(0.2f, 0.2f, 0.5f, 1.0f);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 		// light box
+		lightShader.use();
+		glBindVertexArray(VAO);
 		glm::mat4 lightModel = glm::mat4(1.0f);
 		lightModel = glm::translate(lightModel, lightPos);
+		lightModel = glm::rotate(lightModel, cubeRotationAngles[0], cubeRotations[0]);
 		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-		boxShader.setMat4("model", lightModel);
-		boxShader.setBool("override", true); // light cube overrides color settings
-		glBindVertexArray(lightVAO);
+		lightShader.setMat4("projection", projection);
+		lightShader.setMat4("view", view);
+		lightShader.setMat4("model", lightModel);
+		lightShader.setVec3("lightPos", lightPos);
+		lightShader.setVec3("lightColor", lightColor);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
-		// spinning boxes
-		boxShader.setMat4("view", view);
-		boxShader.setMat4("projection", projection);
-		boxShader.setFloat("uTime", time);
-		boxShader.setFloat("textureMix", textureMix);
-		boxShader.setFloat("ambientStrength", ambientStrength);
-		boxShader.setFloat("diffuseStrength", diffuseStrength);
-		boxShader.setFloat("specularStrength", specularStrength);
-		boxShader.setInt("shininess", shininess);
+		glEnable(GL_DEPTH_TEST);
+
+		// boxes
+		boxShader.use();
 		boxShader.setVec3("viewPos", camera.getPosition());
+		boxShader.setBool("blinnPhong", blinnPhong);
 		boxShader.setVec3("lightPos", lightPos);
 		boxShader.setVec3("lightColor", lightColor);
-		boxShader.setBool("override", false);
+		boxShader.setFloat("ambientStrength", ambientK);
+		boxShader.setFloat("diffuseStrength", diffuseK);
+		boxShader.setFloat("specularStrength", specularK);
+		boxShader.setFloat("shininess", shininess);
+		container.Bind(GL_TEXTURE0);
 
-		boxTexture.Bind(0);
-		faceTexture.Bind(1);
-
-		for (unsigned int i = 0; i < 10; i++)
+		boxShader.setMat4("projection", projection);
+		boxShader.setMat4("view", view);
+		glBindVertexArray(VAO);
+		for (unsigned int i = 0; i < CUBENUM; i++)
 		{
-			float angle = 20.0f * (i + 1); // different cube orientations
-
 			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, boxPositions[i]);
-			model = glm::rotate(model, (float)glfwGetTime() + glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			model = glm::translate(model, cubePositions[i]);
+			model = glm::rotate(model, cubeRotationAngles[i], cubeRotations[i]);
+			model = glm::scale(model, cubeScales[i]);
 
 			boxShader.setMat4("model", model);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		#pragma region ImGUI
+		#pragma region ImGui
+		// ImGui
 		ImGui_ImplGlfw_NewFrame();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui::NewFrame();
 
-		ImGui::Begin("Light Settings");
+		ImGui::Begin("Lighting");
+		ImGui::Checkbox("Blinn-Phong", &blinnPhong);
 		ImGui::DragFloat3("Light Position", &lightPos.x, 0.1f);
 		ImGui::ColorEdit3("Light Color", &lightColor.r);
-		ImGui::SliderFloat("Ambient K", &ambientStrength, 0.0f, 1.0f);
-		ImGui::SliderFloat("Diffuse K", &diffuseStrength, 0.0f, 1.0f);
-		ImGui::SliderFloat("Specular K", &specularStrength, 0.0f, 1.0f);
-		ImGui::SliderInt("Shininess", &shininess, 2,1024);
-		ImGui::SliderFloat("Texture Mix", &textureMix, 0.0f, 1.0f);
+		ImGui::SliderFloat("Ambient K", &ambientK, 0.0f, 1.0f);
+		ImGui::SliderFloat("Diffuse K", &diffuseK, 0.0f, 1.0f);
+		ImGui::SliderFloat("Specular K", &specularK, 0.0f, 1.0f);
+		ImGui::SliderFloat("Shininess", &shininess, 2.0f, 1024.0f);
 		ImGui::End();
 
 		ImGui::Render();
@@ -245,3 +244,4 @@ int main() {
 	}
 	printf("Shutting down...");
 }
+
