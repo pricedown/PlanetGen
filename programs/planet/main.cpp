@@ -19,6 +19,7 @@
 #include "pl/shader.h"
 #include "pl/texture2d.h"
 #include "pl/camera.h"
+#include "pl/geometry.h"
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
@@ -27,14 +28,6 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 pl::Camera camera(SCREEN_WIDTH, SCREEN_HEIGHT);
-
-const unsigned int CUBENUM = 20;
-glm::vec3 cubePositions[CUBENUM];
-glm::vec3 cubeScales[CUBENUM];
-glm::vec3 cubeRotations[CUBENUM];
-glm::vec3 cubeRotationDirs[CUBENUM];
-float cubeRotationAngles[CUBENUM];
-float cubeRotationSpeed = 0.7f;
 
 const float cubeVertices[] = {
 	// position				normal				uv
@@ -127,36 +120,20 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	#pragma endregion
 	#pragma region World
-	for (int i = 0; i < CUBENUM; i++) {
-		float cubeBounds = 6.0f;
-		float fieldStartsAt = -0.0f;
-		cubePositions[i].x = ew::RandomRange(-cubeBounds, cubeBounds);
-		cubePositions[i].y = ew::RandomRange(-cubeBounds, cubeBounds);
-		cubePositions[i].z = ew::RandomRange(fieldStartsAt + cubeBounds / 2.0f, fieldStartsAt - cubeBounds / 2.0f);
+	pl::initCubes();
+	pl::Mesh plane = pl::plane(3.0, 3.0, 3);
 
-		float cubeMinScale = 0.25f;
-		float cubeMaxScale = 1.2f;
-		cubeScales[i] = glm::vec3(ew::RandomRange(cubeMinScale, cubeMaxScale));
-
-		float cubeRotationAngle = ew::RandomRange(0.0f, 3.0f);
-		cubeRotations[i] = cubeRotationAngle * glm::vec3(ew::RandomRange(-1.0f, 1.0f), ew::RandomRange(-1.0f, 1.0f), ew::RandomRange(-1.0f, 1.0f));
-		cubeRotationDirs[i] = glm::vec3(ew::RandomRange(-1.0f, 1.0f), ew::RandomRange(-1.0f, 1.0f), ew::RandomRange(-1.0f, 1.0f));
-		cubeRotationAngles[i] = 0.0f;
-	}
 	#pragma endregion
 
 	pl::Shader boxShader = pl::Shader("assets/shaders/cube.vert", "assets/shaders/cube.frag");
 	pl::Shader lightShader = pl::Shader("assets/shaders/light.vert", "assets/shaders/light.frag");
 	pl::Texture2D container = pl::Texture2D("assets/textures/container.jpg", GL_LINEAR, GL_REPEAT);
 
-	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, -2.0f);
 	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 	float ambientK = 0.1f, specularK = 0.5f, diffuseK = 0.5f;
 	float shininess = 18.0f;
 	bool blinnPhong = true;
-
-	camera.setPosition(glm::vec3(-2.98126, 0.321037, 1.68709));
-	camera.setFront(glm::vec3(0.855282, -0.0662739, -0.513907));
 
 	while (!glfwWindowShouldClose(window)) {
 		// Inputs
@@ -183,7 +160,6 @@ int main() {
 		glBindVertexArray(VAO);
 		glm::mat4 lightModel = glm::mat4(1.0f);
 		lightModel = glm::translate(lightModel, lightPos);
-		lightModel = glm::rotate(lightModel, cubeRotationAngles[0], cubeRotations[0]);
 		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
 		lightShader.setMat4("projection", projection);
 		lightShader.setMat4("view", view);
@@ -192,9 +168,9 @@ int main() {
 		lightShader.setVec3("lightColor", lightColor);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
+		// boxes
 		glEnable(GL_DEPTH_TEST);
 
-		// boxes
 		boxShader.use();
 		boxShader.setVec3("viewPos", camera.getPosition());
 		boxShader.setBool("blinnPhong", blinnPhong);
@@ -209,16 +185,23 @@ int main() {
 		boxShader.setMat4("projection", projection);
 		boxShader.setMat4("view", view);
 		glBindVertexArray(VAO);
-		for (unsigned int i = 0; i < CUBENUM; i++)
+
+		boxShader.setMat4("projection", projection);
+		boxShader.setMat4("view", view);
+
+		for (unsigned int i = 0; i < pl::CUBENUM; i++)
 		{
 			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			model = glm::rotate(model, cubeRotationAngles[i], cubeRotations[i]);
-			model = glm::scale(model, cubeScales[i]);
+			model = glm::translate(model, pl::cubePositions[i]);
+			model = glm::rotate(model, pl::cubeRotationAngles[i], pl::cubeRotations[i]);
+			model = glm::scale(model, pl::cubeScales[i]);
 
 			boxShader.setMat4("model", model);
+
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+
+		//plane.drawElements();
 
 		#pragma region ImGui
 		// ImGui
