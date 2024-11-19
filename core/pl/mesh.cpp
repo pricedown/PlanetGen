@@ -150,7 +150,7 @@ void Mesh::Draw(Shader& shader)
     }
     */
 
-    glBindTexture(GL_TEXTURE_2D, textures[0].id);
+    // fix: glBindTexture(GL_TEXTURE_2D, textures[0].id);
     glActiveTexture(GL_TEXTURE0);
 
     // draw mesh

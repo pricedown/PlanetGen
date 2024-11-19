@@ -137,7 +137,16 @@ int main() {
 			boxMesh.DrawArray(boxShader);
 		}
 
-		#pragma region ImGui
+		// plane
+		float pScale = 3.0f;
+		pl::Mesh plane = pl::plane(pScale, pScale, 3);
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0-0.5*pScale, 0-0.5*pScale, -3.0f));
+		//model = glm::scale(model, glm::vec3(1.0f));
+		boxShader.setMat4("model", model);
+		plane.Draw(boxShader);
+
+#pragma region ImGui
 		ImGui_ImplGlfw_NewFrame();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui::NewFrame();
@@ -154,7 +163,7 @@ int main() {
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		#pragma endregion
+#pragma endregion
 
 		glfwSwapBuffers(window);
 	}

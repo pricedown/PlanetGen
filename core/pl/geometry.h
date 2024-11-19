@@ -1,8 +1,17 @@
 #include <vector>
 #include <glm/glm.hpp>
+#include "../core/ew/ewMath/ewMath.h"
 #include "mesh.h"
 
 namespace pl {
+	const float quadVertices[] = {
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,   0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,   1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,   1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,   1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,   0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,   0.0f, 0.0f,
+	};
 	const float cubeVertices[] = {
 		// position				normal				uv
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,   0.0f, 0.0f,
@@ -80,8 +89,8 @@ namespace pl {
 			for (int col = 0; col <= subdiv; col++) {
 				pl::Vertex v;
 
-				v.pos.x = (float)col / subdiv;
-				v.pos.y = (float)row / subdiv;
+				v.pos.x = width * ((float)col / subdiv);
+				v.pos.y = height *((float)row / subdiv);
 				v.pos.z = 0.0;
 
 				v.norm.x = 0;
@@ -104,21 +113,12 @@ namespace pl {
 				unsigned int tr = tl + 1;
 
 				// counter clockwise winding order means it's facing us
-				/*
 				indices.push_back(bl);
 				indices.push_back(br);
 				indices.push_back(tr);
 				indices.push_back(tr);
 				indices.push_back(tl);
 				indices.push_back(bl);
-				*/
-
-				indices.push_back(bl);
-				indices.push_back(br);
-				indices.push_back(tl);
-				indices.push_back(bl);
-				indices.push_back(tr);
-				indices.push_back(tl);
 			}
 		}
 
