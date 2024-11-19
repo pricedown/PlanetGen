@@ -51,16 +51,6 @@ int main() {
 		return 1;
 	}
 
-	pl::Noise noise;
-
-	float from = noise.noise();
-	float to = noise.noise();
-
-	std::cout << std::endl;
-	for (float i = 0; i < 1; i += 0.05) {
-		std::cout << noise.interpolate(from, to, i) << std::endl;
-	}
-
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);

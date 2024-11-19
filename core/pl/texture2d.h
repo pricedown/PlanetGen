@@ -11,10 +11,13 @@
 #include "../ew/external/glad.h"
 #include "../ew/external/stb_image.h"
 
+#include "noise.h"
+
 namespace pl {
     class Texture2D {
     public:
         Texture2D(const char* filePath, int filterMode, int wrapMode);
+        Texture2D(float width, float height, int persistence, int numOctaves);
         ~Texture2D();
         void Bind(unsigned int slot = 0); //Bind to a specific texture unit
     private:

@@ -30,6 +30,22 @@ Texture2D::Texture2D(const char* filePath, int filterMode, int wrapMode) {
 	}
 	stbi_image_free(data);
 }
+Texture2D::Texture2D(float width, float height, int persistence, int numOctaves) {
+	m_width = width;
+	m_height = height;
+	
+	glCreateTextures(GL_TEXTURE_2D, 1, &m_id);
+	glTextureStorage2D(m_id, 1, GL_RGB32F, m_width, m_height);
+	glBindTexture(GL_TEXTURE_2D, m_id);
+
+	float* data = new float[m_width * m_height * 3];
+	Noise noise = Noise(persistence, numOctaves);
+	for (int i = 0; i < m_width * m_height * 3; i++) {
+		data[i] = noise.perlinNoise2D(i % m_height, i / m_height);
+	}
+	glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, GL_RGB, GL_FLOAT, data);
+	delete[] data;
+}
 Texture2D::~Texture2D() {
 	glDeleteTextures(1, &m_id);
 }
