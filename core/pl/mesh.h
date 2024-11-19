@@ -10,6 +10,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
+#include <ostream>
 
 #include "shader.h"
 
@@ -21,8 +22,9 @@ namespace pl {
 		glm::vec3 pos;
 		glm::vec3 norm;
 		glm::vec2 uv;
-	};
 
+	};
+	
 	struct Texture {
 		unsigned int id;
 		string type;
@@ -38,7 +40,7 @@ namespace pl {
 		Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures);
 		Mesh(vector<Vertex> vertices, vector<unsigned int> indices);
 		Mesh(vector<Vertex> vertices);
-		Mesh(const float vertices[]);
+		Mesh(const float vertexArray[], int arrayLength);
 		void Draw(Shader& shader);
 		void DrawArray(Shader& shader);
 	private:

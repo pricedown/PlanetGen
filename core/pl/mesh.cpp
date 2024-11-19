@@ -12,6 +12,14 @@ Mesh::Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture
     setupVAOEBO();
 }
 
+// vertex printable
+std::ostream& operator<<(std::ostream& os, const Vertex& v) {
+	return os << "pos: (" << v.pos.x << ", " << v.pos.y << ", " << v.pos.z << ") "
+		<< "dir: (" << v.norm.x << ", " << v.norm.y << ", " << v.norm.z << ") "
+		<< "uv: (" << v.uv.x << ", " << v.uv.y << ")";
+}
+
+
 Mesh::Mesh(vector<Vertex> vertices, vector<unsigned int> indices)
 {
     this->vertices = vertices;
@@ -27,19 +35,20 @@ Mesh::Mesh(vector<Vertex> vertices)
     setupVAO();
 }
 
-Mesh::Mesh(const float vArray[])
+Mesh::Mesh(const float vArray[], int vLength)
 {
-    if ((sizeof(vertices) / sizeof(float)) % 8 != 0) {
+    if (vLength % 8 != 0) {
         std::cout << "Vertex Array Size Mismatch" << std::endl;
         return;
     }
 
-    int vertexCount = (sizeof(vertices) / sizeof(float)) / 8;
+    int vertexCount = vLength / 8;
+
     for (int vI = 0; vI < vertexCount; vI++) {
         int aI = 8 * vI;
         
         Vertex v;
-        
+
         v.pos.x = vArray[aI + 0];
         v.pos.y = vArray[aI + 1];
         v.pos.z = vArray[aI + 2];
@@ -53,6 +62,11 @@ Mesh::Mesh(const float vArray[])
 
         vertices.push_back(v);
     }
+
+    std::cout << vertices.size() << std::endl;
+
+
+    //for (Vertex v : vertices) std::cout << v << std::endl;
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
@@ -68,7 +82,7 @@ Mesh::Mesh(const float vArray[])
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
     //setupVAO();
 }
 

@@ -147,18 +147,18 @@ int main() {
 
 		for (unsigned int i = 0; i < pl::CUBENUM; i++)
 		{
-			pl::Mesh boxMesh(pl::cubeVertices);
+			int vertexCount = sizeof(pl::cubeVertices) / sizeof((pl::cubeVertices[0]));
+			//pl::Mesh boxMesh(pl::cubeVertices, vertexCount);
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, pl::cubePositions[i]);
 			model = glm::rotate(model, pl::cubeRotationAngles[i], pl::cubeRotations[i]);
 			model = glm::scale(model, pl::cubeScales[i]);
 			boxShader.setMat4("model", model);
-			boxMesh.DrawArray(boxShader);
-			//glDrawArrays(GL_TRIANGLES, 0, 36);
+			//boxMesh.DrawArray(boxShader);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-#pragma region ImGui
-// ImGui
+		#pragma region ImGui
 		ImGui_ImplGlfw_NewFrame();
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui::NewFrame();
@@ -175,7 +175,7 @@ int main() {
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-#pragma endregion
+		#pragma endregion
 
 		glfwSwapBuffers(window);
 	}
