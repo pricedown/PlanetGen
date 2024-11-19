@@ -40,8 +40,11 @@ Texture2D::Texture2D(float width, float height, int persistence, int numOctaves)
 
 	float* data = new float[m_width * m_height * 3];
 	Noise noise = Noise(persistence, numOctaves);
-	for (int i = 0; i < m_width * m_height * 3; i++) {
-		data[i] = noise.perlinNoise2D(i % m_height, i / m_height);
+	for (int i = 0; i < m_width * m_height; i += 3) {
+		data[i] = noise.perlinNoise2D(i % m_height, i / m_height) / 50000.0;
+		data[i + 1] = data[i];
+		data[i + 2] = data[i];
+		std::cout << data[i] << std::endl;
 	}
 	glTextureSubImage2D(m_id, 0, 0, 0, m_width, m_height, GL_RGB, GL_FLOAT, data);
 	delete[] data;
