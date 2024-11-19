@@ -59,24 +59,8 @@ int main() {
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); //Unlocks mouse
 	#pragma endregion
 	#pragma region Geometry data
-	unsigned int VAO, VBO, EBO;
-
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(pl::cubeVertices), pl::cubeVertices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 3));
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(sizeof(float) * 6));
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glEnableVertexAttribArray(2);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#pragma endregion
+	pl::Mesh boxMesh(pl::cubeVertices, sizeof(pl::cubeVertices));
+	#pragma endregion
 	#pragma region World
 	pl::initCubes();
 	#pragma endregion
@@ -113,7 +97,6 @@ int main() {
 
 		// light box
 		lightShader.use();
-		glBindVertexArray(VAO);
 		glm::mat4 lightModel = glm::mat4(1.0f);
 		lightModel = glm::translate(lightModel, lightPos);
 		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
@@ -122,7 +105,7 @@ int main() {
 		lightShader.setMat4("model", lightModel);
 		lightShader.setVec3("lightPos", lightPos);
 		lightShader.setVec3("lightColor", lightColor);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		boxMesh.DrawArray(lightShader);
 
 		// boxes
 		glEnable(GL_DEPTH_TEST);
@@ -140,22 +123,18 @@ int main() {
 
 		boxShader.setMat4("projection", projection);
 		boxShader.setMat4("view", view);
-		glBindVertexArray(VAO);
 
 		boxShader.setMat4("projection", projection);
 		boxShader.setMat4("view", view);
 
 		for (unsigned int i = 0; i < pl::CUBENUM; i++)
 		{
-			int vertexCount = sizeof(pl::cubeVertices) / sizeof((pl::cubeVertices[0]));
-			//pl::Mesh boxMesh(pl::cubeVertices, vertexCount);
 			glm::mat4 model = glm::mat4(1.0f);
 			model = glm::translate(model, pl::cubePositions[i]);
 			model = glm::rotate(model, pl::cubeRotationAngles[i], pl::cubeRotations[i]);
 			model = glm::scale(model, pl::cubeScales[i]);
 			boxShader.setMat4("model", model);
-			//boxMesh.DrawArray(boxShader);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			boxMesh.DrawArray(boxShader);
 		}
 
 		#pragma region ImGui
