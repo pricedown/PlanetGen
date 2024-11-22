@@ -56,7 +56,7 @@ float perlin_noise(vec2 uv, float cells_count)
 
 void main()
 {
-    vec2 uv = TexCoord;
+    vec2 uv = aTexCoord;
 
     vec3 col = 0.5 + 0.5*cos(uTime+uv.xyx+vec3(0,2,4));
 
@@ -64,7 +64,7 @@ void main()
 
     vColor = vec4(fragColor, 1.0);
     TexCoord = aTexCoord;
-	gl_Position = projection * view * model * vec4(aPos, 1.0);
+	gl_Position = projection * view * model * vec4(aPos + fragColor, 1.0);
 	Normal = mat3(transpose(inverse(model))) * aNormal;
 	FragPos = vec3(model * vec4(aPos, 1.0));
 }
