@@ -19,10 +19,16 @@ using std::string;
 
 namespace pl {
 	struct Vertex {
-		glm::vec3 pos;
-		glm::vec3 norm;
-		glm::vec2 uv;
+		glm::vec3 pos = glm::vec3(0);
+		glm::vec3 norm = glm::vec3(0);
+		glm::vec2 uv = glm::vec2(0);
 
+		Vertex() {
+
+		}
+		Vertex(const glm::vec3& pos, const glm::vec3& normal, const glm::vec2& uv) :
+			pos(pos), norm(normal), uv(uv) {
+		}
 	};
 	
 	struct Texture {
@@ -36,7 +42,8 @@ namespace pl {
 		vector<Vertex>       vertices;
 		vector<unsigned int> indices;
 		vector<Texture>      textures;
-
+		
+		Mesh() {};
 		Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures);
 		Mesh(vector<Vertex> vertices, vector<unsigned int> indices);
 		Mesh(vector<Vertex> vertices);

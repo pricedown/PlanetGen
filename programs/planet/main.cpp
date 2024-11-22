@@ -24,6 +24,8 @@
 #include "pl/mesh.h"
 #include "pl/lighting.h"
 
+#include "pl/circle.h"
+
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 
@@ -74,6 +76,24 @@ int main() {
 	float ambientK = 0.1f, specularK = 0.5f, diffuseK = 0.5f;
 	float shininess = 18.0f;
 	bool blinnPhong = true;
+
+	//jon code
+	std::vector<pl::Vertex> vertices;
+	std::vector<unsigned int> indices;
+
+	/*vertices.push_back(pl::Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0, 0, 1), glm::vec2(0, 0)));
+	vertices.push_back(pl::Vertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0, 0, 1), glm::vec2(1, 0)));
+	vertices.push_back(pl::Vertex(glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0, 0, 1), glm::vec2(1, 1)));
+	vertices.push_back(pl::Vertex(glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(0, 0, 1), glm::vec2(0, 1)));
+	indices.push_back(0);
+	indices.push_back(1);
+	indices.push_back(2);
+	indices.push_back(2);
+	indices.push_back(3);
+	indices.push_back(0);*/
+	pl::createSphere(2.0f, 256, vertices, indices);
+	pl::Mesh sphere(vertices,indices);
+	
 
 	while (!glfwWindowShouldClose(window)) {
 		// Inputs
@@ -137,6 +157,15 @@ int main() {
 			boxMesh.DrawArray(boxShader);
 		}
 
+		//Draw plane
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(0.0, 0.0, -5.0));
+		boxShader.setMat4("model", transform); 
+
+		sphere.Draw(boxShader);
+
+
+		/*
 		// plane
 		float pScale = 3.0f;
 		pl::Mesh plane = pl::plane(pScale, pScale, 3);
@@ -145,6 +174,7 @@ int main() {
 		//model = glm::scale(model, glm::vec3(1.0f));
 		boxShader.setMat4("model", model);
 		plane.Draw(boxShader);
+		*/
 
 #pragma region ImGui
 		ImGui_ImplGlfw_NewFrame();
