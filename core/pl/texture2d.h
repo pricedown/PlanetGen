@@ -11,8 +11,6 @@
 #include "../ew/external/glad.h"
 #include "../ew/external/stb_image.h"
 
-#include "noise.h"
-
 namespace pl {
     class Texture2D {
     public:
