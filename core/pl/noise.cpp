@@ -3,6 +3,8 @@
 using namespace pl;
 
 Noise::Noise() {
+	persistence = 2;
+	numOctaves = 5;
 	srand(time(NULL));
 }
 
@@ -56,7 +58,7 @@ float Noise::interpolateNoise(float x, float y) {
 }
 
 float Noise::perlinNoise2D(float x, float y) {
-	int total = 0;
+	float total = 0;
 	int n = numOctaves - 1;
 
 	for (int i = 0; i < n; i++) {

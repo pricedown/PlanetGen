@@ -64,7 +64,7 @@ void main()
 
     vColor = vec4(fragColor, 1.0);
     TexCoord = aTexCoord;
-	gl_Position = projection * view * model * vec4(aPos + fragColor, 1.0);
+	gl_Position = projection * view * model * vec4(aPos + fragColor * aNormal, 1.0);
 	Normal = mat3(transpose(inverse(model))) * aNormal;
 	FragPos = vec3(model * vec4(aPos, 1.0));
 }
