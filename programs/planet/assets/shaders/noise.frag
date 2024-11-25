@@ -45,10 +45,12 @@ void main() {
     vec3 specular = lightColor * spec * specularStrength;
 
     vec3 result = (ambient + diffuse + specular) * objectColor;
+    vec3 green = vec3(0.0, 1.0, 0.0);
+    vec3 blue = vec3(0.0, 0.0, 1.0);
     if(Altitude > 0.5) {
-        FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+        FragColor = vec4(green * result, 1.0);
     } else {
-        FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+        FragColor = vec4(blue * result, 1.0);
     }
     //FragColor = vec4(result, 1.0);
     //FragColor = vec4(Normal,1.0);
