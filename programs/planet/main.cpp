@@ -67,7 +67,7 @@ int main() {
 	pl::initCubes();
 	#pragma endregion
 
-	pl::Shader boxShader = pl::Shader("assets/shaders/noise.vert", "assets/shaders/cube.frag");
+	pl::Shader boxShader = pl::Shader("assets/shaders/noise.vert", "assets/shaders/noise.frag");
 	pl::Shader lightShader = pl::Shader("assets/shaders/light.vert", "assets/shaders/light.frag");
 	pl::Texture2D container = pl::Texture2D("assets/textures/container.jpg", GL_LINEAR, GL_REPEAT);
 
