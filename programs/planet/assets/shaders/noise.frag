@@ -3,6 +3,7 @@
 in vec2 TexCoord;
 in vec3 Normal;  
 in vec3 FragPos;  
+in float Altitude;
 
 out vec4 FragColor;
 
@@ -44,6 +45,11 @@ void main() {
     vec3 specular = lightColor * spec * specularStrength;
 
     vec3 result = (ambient + diffuse + specular) * objectColor;
-    FragColor = vec4(result, 1.0);
+    if(Altitude > 0.5) {
+        FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+    } else {
+        FragColor = vec4(0.0, 0.0, 1.0, 1.0);
+    }
+    //FragColor = vec4(result, 1.0);
     //FragColor = vec4(Normal,1.0);
 }
