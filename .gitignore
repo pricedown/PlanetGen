@@ -37,3 +37,26 @@ out/
 build/
 .vs/
 bin-*/
+
+# CMake files
+CMakeCache.txt
+CMakeFiles/
+CPM_modules/
+cmake/
+cmake_install.cmake
+core/CMakeFiles/
+core/cmake_install.cmake
+programs/planet/CMakeFiles/
+programs/planet/cmake_install.cmake
+
+# Makefiles and build directories
+Makefile
+_deps/
+bin/
+
+# Configuration files
+imgui.ini
+cpm-package-lock.cmake
+
+# scripts
+programs/planet/test.sh

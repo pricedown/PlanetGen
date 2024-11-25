@@ -38,7 +38,7 @@ void Camera::processInput(GLFWwindow* window)
 		perspective = !perspective; // Toggle perspective or orthographic
 	}
 	tabHeld = glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS;
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 	else {
@@ -47,7 +47,7 @@ void Camera::processInput(GLFWwindow* window)
 	}
 }
 void Camera::mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS) {
 		//Check if first mouse call
 		if (firstMouse) {
 			lastX = xpos;
