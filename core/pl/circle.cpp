@@ -51,4 +51,11 @@ namespace pl {
 		return;
 	}
 
+  pl::Mesh createSphere(float radius, int subDivisions) {
+    std::vector<pl::Vertex> vertices;
+    std::vector<unsigned int> indices;
+
+    pl::createSphere(radius, subDivisions, vertices, indices);
+    return pl::Mesh(vertices, indices);
+  }
 }

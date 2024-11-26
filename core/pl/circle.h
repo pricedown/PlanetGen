@@ -3,4 +3,5 @@
 
 namespace pl {
 	void createSphere(float radius, int subDivisions, std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+  pl::Mesh createSphere(float radius, int subDivisions);
 }
