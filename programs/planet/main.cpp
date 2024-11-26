@@ -1,5 +1,3 @@
-#pragma once
-
 #include <ew/external/glad.h>
 #include <ew/ewMath/ewMath.h>
 
@@ -71,9 +69,9 @@ int main() {
 	pl::Shader lightShader = pl::Shader("assets/shaders/light.vert", "assets/shaders/light.frag");
 	pl::Texture2D container = pl::Texture2D("assets/textures/container.jpg", GL_LINEAR, GL_REPEAT);
 
-	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, -2.0f);
+	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 4.0f);
 	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-	float ambientK = 0.1f, specularK = 0.5f, diffuseK = 0.5f;
+	float ambientK = 0.8f, specularK = 0.5f, diffuseK = 0.8f;
 	float shininess = 18.0f;
 	bool blinnPhong = true;
 
@@ -154,16 +152,15 @@ int main() {
 			model = glm::rotate(model, pl::cubeRotationAngles[i], pl::cubeRotations[i]);
 			model = glm::scale(model, pl::cubeScales[i]);
 			boxShader.setMat4("model", model);
-			boxMesh.DrawArray(boxShader);
+			//boxMesh.DrawArray(boxShader);
 		}
 
-		//Draw plane
+		// sphere
 		glm::mat4 transform = glm::mat4(1.0f);
 		transform = glm::translate(transform, glm::vec3(0.0, 0.0, -5.0));
 		boxShader.setMat4("model", transform); 
 
 		sphere.Draw(boxShader);
-
 
 		/*
 		// plane
