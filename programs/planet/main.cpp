@@ -20,7 +20,6 @@
 #include "pl/geometry.h"
 #include "pl/noise.h"
 #include "pl/mesh.h"
-#include "pl/lighting.h"
 
 #include "pl/circle.h"
 
@@ -69,11 +68,10 @@ int main() {
 	pl::Shader lightShader = pl::Shader("assets/shaders/light.vert", "assets/shaders/light.frag");
 	pl::Texture2D container = pl::Texture2D("assets/textures/container.jpg", GL_LINEAR, GL_REPEAT);
 
-	glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 4.0f);
-	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-	float ambientK = 0.8f, specularK = 0.5f, diffuseK = 0.8f;
-	float shininess = 18.0f;
-	bool blinnPhong = true;
+  pl::Light light;
+	light.pos = glm::vec3(0.0f, 0.0f, 4.0f);
+	light.ambientK = 0.8f;
+  light.diffuseK = 0.8f;
 
 	//jon code
 	std::vector<pl::Vertex> vertices;
@@ -116,27 +114,22 @@ int main() {
 		// light box
 		lightShader.use();
 		glm::mat4 lightModel = glm::mat4(1.0f);
-		lightModel = glm::translate(lightModel, lightPos);
+		lightModel = glm::translate(lightModel, light.pos);
 		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
 		lightShader.setMat4("projection", projection);
 		lightShader.setMat4("view", view);
 		lightShader.setMat4("model", lightModel);
-		lightShader.setVec3("lightPos", lightPos);
-		lightShader.setVec3("lightColor", lightColor);
+		lightShader.setVec3("lightPos", light.pos);
+		lightShader.setVec3("lightColor", light.color);
 		boxMesh.DrawArray(lightShader);
 
 		// boxes
 		glEnable(GL_DEPTH_TEST);
 
 		boxShader.use();
+    
 		boxShader.setVec3("viewPos", camera.getPosition());
-		boxShader.setBool("blinnPhong", blinnPhong);
-		boxShader.setVec3("lightPos", lightPos);
-		boxShader.setVec3("lightColor", lightColor);
-		boxShader.setFloat("ambientStrength", ambientK);
-		boxShader.setFloat("diffuseStrength", diffuseK);
-		boxShader.setFloat("specularStrength", specularK);
-		boxShader.setFloat("shininess", shininess);
+    boxShader.setLight(light);
 		container.Bind(GL_TEXTURE0);
 
 		boxShader.setMat4("projection", projection);
@@ -145,6 +138,8 @@ int main() {
 		boxShader.setMat4("projection", projection);
 		boxShader.setMat4("view", view);
 
+    /*
+    // All the boxes
 		for (unsigned int i = 0; i < pl::CUBENUM; i++)
 		{
 			glm::mat4 model = glm::mat4(1.0f);
@@ -152,8 +147,9 @@ int main() {
 			model = glm::rotate(model, pl::cubeRotationAngles[i], pl::cubeRotations[i]);
 			model = glm::scale(model, pl::cubeScales[i]);
 			boxShader.setMat4("model", model);
-			//boxMesh.DrawArray(boxShader);
+			boxMesh.DrawArray(boxShader);
 		}
+    */
 
 		// sphere
 		glm::mat4 transform = glm::mat4(1.0f);
@@ -179,13 +175,13 @@ int main() {
 		ImGui::NewFrame();
 
 		ImGui::Begin("Lighting");
-		ImGui::Checkbox("Blinn-Phong", &blinnPhong);
-		ImGui::DragFloat3("Light Position", &lightPos.x, 0.1f);
-		ImGui::ColorEdit3("Light Color", &lightColor.r);
-		ImGui::SliderFloat("Ambient K", &ambientK, 0.0f, 1.0f);
-		ImGui::SliderFloat("Diffuse K", &diffuseK, 0.0f, 1.0f);
-		ImGui::SliderFloat("Specular K", &specularK, 0.0f, 1.0f);
-		ImGui::SliderFloat("Shininess", &shininess, 2.0f, 1024.0f);
+		ImGui::Checkbox("Blinn-Phong", &light.blinnPhong);
+		ImGui::DragFloat3("Light Position", &light.pos.x, 0.1f);
+		ImGui::ColorEdit3("Light Color", &light.color.r);
+		ImGui::SliderFloat("Ambient K", &light.ambientK, 0.0f, 1.0f);
+		ImGui::SliderFloat("Diffuse K", &light.diffuseK, 0.0f, 1.0f);
+		ImGui::SliderFloat("Specular K", &light.specularK, 0.0f, 1.0f);
+		ImGui::SliderFloat("Shininess", &light.shininess, 2.0f, 1024.0f);
 		ImGui::End();
 
 		ImGui::Render();
