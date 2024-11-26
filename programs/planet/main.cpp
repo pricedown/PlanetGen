@@ -74,6 +74,10 @@ int main() {
 	light.ambientK = 0.8f;
   light.diffuseK = 0.8f;
 
+  pl::Light waterLight;
+	waterLight.pos = glm::vec3(0.0f, 0.0f, 4.0f);
+	waterLight.specularK = 1.0f;
+
   float planetRadius = 2.0f;
   float waterLevel = 0.5f;
 
@@ -136,11 +140,14 @@ int main() {
 		planet.Draw(planetShader);
 
     // water
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
     waterShader.use();
 
 		waterShader.setVec3("viewPos", camera.getPosition());
-    waterShader.setLight(light);
-    waterShader.setVec3("lightColor", glm::vec3(0.0f,0.0f,1.0f)); // TODO: formalize
+    waterShader.setLight(waterLight);
+    waterShader.setVec3("waterColor", glm::vec3(0.0f,0.0f,1.0f)); // TODO: formalize
+    waterShader.setFloat("waterAlpha", 0.3f); // TODO: formalize
 		container.Bind(GL_TEXTURE0);
 
 		waterShader.setMat4("projection", projection);

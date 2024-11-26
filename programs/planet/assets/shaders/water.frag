@@ -10,6 +10,7 @@ uniform sampler2D tex;
 
 uniform vec3 viewPos;
 
+// lighting
 uniform bool blinnPhong;
 uniform vec3 lightColor;
 uniform vec3 lightPos;  
@@ -17,6 +18,10 @@ uniform float ambientStrength;
 uniform float specularStrength;
 uniform float diffuseStrength;
 uniform float shininess;
+
+// water
+uniform float waterAlpha;
+uniform vec3 waterColor;
 
 void main() {
     vec3 objectColor = vec3(texture(tex,TexCoord));
@@ -41,9 +46,8 @@ void main() {
     {
         spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
     }
-    vec3 specular = lightColor * spec * specularStrength;
+    vec3 specular = waterColor * lightColor * spec * specularStrength;
 
-    vec3 result = (ambient + diffuse + specular) * objectColor;
-    FragColor = vec4(result, 1.0);
-    //FragColor = vec4(Normal,1.0);
+    vec3 result = (ambient + diffuse + specular) * waterColor;
+    FragColor = vec4(result, waterAlpha);
 }
