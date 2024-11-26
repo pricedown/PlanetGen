@@ -13,6 +13,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "../pl/lighting.h"
+
 namespace pl {
 	class Shader {
 	public:
@@ -25,6 +27,7 @@ namespace pl {
 		void setVec3(const std::string& name, float v1, float v2, float v3) const;
 		void setVec3(const std::string& name, const glm::vec3& value) const;
 		void setMat4(const std::string& name, const glm::mat4& mat) const;
+		void setLight(const pl::Light& light) const;
 	};
 	#endif
 }
