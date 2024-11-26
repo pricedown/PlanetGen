@@ -64,7 +64,8 @@ int main() {
 	pl::initCubes();
 	#pragma endregion
 
-	pl::Shader boxShader = pl::Shader("assets/shaders/noise.vert", "assets/shaders/noise.frag");
+	pl::Shader planetShader = pl::Shader("assets/shaders/noise.vert", "assets/shaders/noise.frag");
+	pl::Shader waterShader = pl::Shader("assets/shaders/water.vert", "assets/shaders/water.frag");
 	pl::Shader lightShader = pl::Shader("assets/shaders/light.vert", "assets/shaders/light.frag");
 	pl::Texture2D container = pl::Texture2D("assets/textures/container.jpg", GL_LINEAR, GL_REPEAT);
 
@@ -73,23 +74,13 @@ int main() {
 	light.ambientK = 0.8f;
   light.diffuseK = 0.8f;
 
-	//jon code
-	std::vector<pl::Vertex> vertices;
-	std::vector<unsigned int> indices;
+  float planetRadius = 2.0f;
+  float waterLevel = 0.5f;
 
-	/*vertices.push_back(pl::Vertex(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0, 0, 1), glm::vec2(0, 0)));
-	vertices.push_back(pl::Vertex(glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0, 0, 1), glm::vec2(1, 0)));
-	vertices.push_back(pl::Vertex(glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0, 0, 1), glm::vec2(1, 1)));
-	vertices.push_back(pl::Vertex(glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(0, 0, 1), glm::vec2(0, 1)));
-	indices.push_back(0);
-	indices.push_back(1);
-	indices.push_back(2);
-	indices.push_back(2);
-	indices.push_back(3);
-	indices.push_back(0);*/
-	pl::createSphere(2.0f, 256, vertices, indices);
-	pl::Mesh sphere(vertices,indices);
-	
+	//jon code
+
+  pl::Mesh planet = pl::createSphere(planetRadius, 256);
+  pl::Mesh water = pl::createSphere(planetRadius + waterLevel, 256);
 
 	while (!glfwWindowShouldClose(window)) {
 		// Inputs
@@ -123,51 +114,47 @@ int main() {
 		lightShader.setVec3("lightColor", light.color);
 		boxMesh.DrawArray(lightShader);
 
-		// boxes
+		// planet
 		glEnable(GL_DEPTH_TEST);
 
-		boxShader.use();
-    
-		boxShader.setVec3("viewPos", camera.getPosition());
-    boxShader.setLight(light);
+		planetShader.use();
+
+		planetShader.setVec3("viewPos", camera.getPosition());
+    planetShader.setLight(light);
 		container.Bind(GL_TEXTURE0);
 
-		boxShader.setMat4("projection", projection);
-		boxShader.setMat4("view", view);
+		planetShader.setMat4("projection", projection);
+		planetShader.setMat4("view", view);
 
-		boxShader.setMat4("projection", projection);
-		boxShader.setMat4("view", view);
+		planetShader.setMat4("projection", projection);
+		planetShader.setMat4("view", view);
 
-    /*
-    // All the boxes
-		for (unsigned int i = 0; i < pl::CUBENUM; i++)
-		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, pl::cubePositions[i]);
-			model = glm::rotate(model, pl::cubeRotationAngles[i], pl::cubeRotations[i]);
-			model = glm::scale(model, pl::cubeScales[i]);
-			boxShader.setMat4("model", model);
-			boxMesh.DrawArray(boxShader);
-		}
-    */
+		glm::mat4 ptransform = glm::mat4(1.0f);
+		ptransform = glm::translate(ptransform, glm::vec3(0.0, 0.0, -5.0));
+		planetShader.setMat4("model", ptransform); 
 
-		// sphere
+		planet.Draw(planetShader);
+
+    // water
+    waterShader.use();
+
+		waterShader.setVec3("viewPos", camera.getPosition());
+    waterShader.setLight(light);
+    waterShader.setVec3("lightColor", glm::vec3(0.0f,0.0f,1.0f)); // TODO: formalize
+		container.Bind(GL_TEXTURE0);
+
+		waterShader.setMat4("projection", projection);
+		waterShader.setMat4("view", view);
+
+		waterShader.setMat4("projection", projection);
+		waterShader.setMat4("view", view);
+
 		glm::mat4 transform = glm::mat4(1.0f);
 		transform = glm::translate(transform, glm::vec3(0.0, 0.0, -5.0));
-		boxShader.setMat4("model", transform); 
+		waterShader.setMat4("model", transform); 
 
-		sphere.Draw(boxShader);
+		water.Draw(planetShader);
 
-		/*
-		// plane
-		float pScale = 3.0f;
-		pl::Mesh plane = pl::plane(pScale, pScale, 3);
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0-0.5*pScale, 0-0.5*pScale, -3.0f));
-		//model = glm::scale(model, glm::vec3(1.0f));
-		boxShader.setMat4("model", model);
-		plane.Draw(boxShader);
-		*/
 
 #pragma region ImGui
 		ImGui_ImplGlfw_NewFrame();
