@@ -8,12 +8,16 @@ out vec2 TexCoord;
 out vec4 vColor;
 out vec3 Normal;
 out vec3 FragPos;
-out float Altitude;
+out float NormalizedAltitude;
 
 uniform float uTime;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+
+// planet
+uniform float minRadius;
+uniform float maxRadius;
 
 vec2 n22 (vec2 p)
 {
@@ -65,12 +69,14 @@ void main()
 
     vec3 fragColor = vec3(tempAlt);
 
-    Altitude = tempAlt;
+    float mountainScalar = maxRadius - minRadius;
+
+    NormalizedAltitude = tempAlt;
     vColor = vec4(fragColor, 1.0);
     TexCoord = aTexCoord;
-	gl_Position = projection * view * model * vec4(aPos + fragColor * aNormal, 1.0);
-	Normal = mat3(transpose(inverse(model))) * aNormal;
-	FragPos = vec3(model * vec4(aPos, 1.0));
+    gl_Position = projection * view * model * vec4(aPos + mountainScalar*fragColor * aNormal, 1.0);
+    Normal = mat3(transpose(inverse(model))) * aNormal;
+    FragPos = vec3(model * vec4(aPos, 1.0));
 }
 
 //https://www.shadertoy.com/view/DsK3W1

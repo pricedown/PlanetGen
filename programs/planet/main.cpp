@@ -18,10 +18,9 @@
 #include "pl/texture2d.h"
 #include "pl/camera.h"
 #include "pl/geometry.h"
-#include "pl/noise.h"
 #include "pl/mesh.h"
-
-#include "pl/circle.h"
+#include "pl/noise.h"
+#include "pl/planet.h"
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
@@ -78,13 +77,12 @@ int main() {
 	waterLight.pos = glm::vec3(0.0f, 0.0f, 4.0f);
 	waterLight.specularK = 1.0f;
 
-  float planetRadius = 2.0f;
-  float waterLevel = 0.5f;
+  pl::Planet planetTopology;
 
 	//jon code
 
-  pl::Mesh planet = pl::createSphere(planetRadius, 256);
-  pl::Mesh water = pl::createSphere(planetRadius + waterLevel, 256);
+  pl::Mesh planet = pl::createSphere(planetTopology.minRadius, 256);
+  pl::Mesh water = pl::createSphere(planetTopology.minRadius + planetTopology.waterLevel, 256);
 
 	while (!glfwWindowShouldClose(window)) {
 		// Inputs
@@ -124,6 +122,8 @@ int main() {
 		planetShader.use();
 
 		planetShader.setVec3("viewPos", camera.getPosition());
+		planetShader.setFloat("minRadius", planetTopology.minRadius);
+		planetShader.setFloat("maxRadius", planetTopology.maxRadius);
     planetShader.setLight(light);
 		container.Bind(GL_TEXTURE0);
 
@@ -176,6 +176,12 @@ int main() {
 		ImGui::SliderFloat("Diffuse K", &light.diffuseK, 0.0f, 1.0f);
 		ImGui::SliderFloat("Specular K", &light.specularK, 0.0f, 1.0f);
 		ImGui::SliderFloat("Shininess", &light.shininess, 2.0f, 1024.0f);
+		ImGui::End();
+
+		ImGui::Begin("Planet");
+		ImGui::SliderFloat("Water Level", &planetTopology.waterLevel, 0.05f, 3.0f);
+		ImGui::SliderFloat("Lowest Depth", &planetTopology.minRadius, 0.1f, 3.0f);
+		ImGui::SliderFloat("Highest Peak", &planetTopology.maxRadius, 0.1f, 3.0f);
 		ImGui::End();
 
 		ImGui::Render();
