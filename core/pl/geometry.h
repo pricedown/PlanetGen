@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include "../core/ew/ewMath/ewMath.h"
 #include "mesh.h"
+#include "circle.h"
 
 namespace pl {
 	const float quadVertices[] = {
