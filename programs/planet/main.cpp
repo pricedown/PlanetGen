@@ -79,6 +79,9 @@ int main() {
 
   pl::Planet planetTopology;
 
+  pl::Mesh planet = pl::createSphere(1.0, 256);
+  pl::Mesh water = pl::createSphere(1.0, 256);
+
 	//jon code
 
 	while (!glfwWindowShouldClose(window)) {
@@ -114,54 +117,44 @@ int main() {
 		boxMesh.DrawArray(lightShader);
 
 		// planet
-    pl::Mesh planet = pl::createSphere(planetTopology.minRadius, 256);
-
 		glEnable(GL_DEPTH_TEST);
 
 		planetShader.use();
-
-		planetShader.setVec3("viewPos", camera.getPosition());
-		planetShader.setFloat("minRadius", planetTopology.minRadius);
-		planetShader.setFloat("maxRadius", planetTopology.maxRadius);
     planetShader.setLight(light);
-		container.Bind(GL_TEXTURE0);
-
+		planetShader.setVec3("viewPos", camera.getPosition());
 		planetShader.setMat4("projection", projection);
 		planetShader.setMat4("view", view);
-
-		planetShader.setMat4("projection", projection);
-		planetShader.setMat4("view", view);
-
 		glm::mat4 ptransform = glm::mat4(1.0f);
 		ptransform = glm::translate(ptransform, glm::vec3(0.0, 0.0, -5.0));
+		ptransform = glm::scale(ptransform, glm::vec3(planetTopology.minRadius));
 		planetShader.setMat4("model", ptransform); 
 
+		planetShader.setFloat("minRadius", planetTopology.minRadius);
+		planetShader.setFloat("maxRadius", planetTopology.maxRadius);
+		planetShader.setFloat("mountainRoughness", planetTopology.mountainRoughness);
+
+		container.Bind(GL_TEXTURE0);
 		planet.Draw(planetShader);
 
     // water
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+
     waterShader.use();
-
-    pl::Mesh water = pl::createSphere(planetTopology.waterLevel, 256);
-		waterShader.setVec3("viewPos", camera.getPosition());
     waterShader.setLight(waterLight);
-    waterShader.setVec3("waterColor", glm::vec3(0.0f,0.0f,1.0f)); // TODO: formalize
-    waterShader.setFloat("waterAlpha", 0.3f); // TODO: formalize
-		container.Bind(GL_TEXTURE0);
-
+		waterShader.setVec3("viewPos", camera.getPosition());
 		waterShader.setMat4("projection", projection);
 		waterShader.setMat4("view", view);
-
-		waterShader.setMat4("projection", projection);
-		waterShader.setMat4("view", view);
-
 		glm::mat4 transform = glm::mat4(1.0f);
 		transform = glm::translate(transform, glm::vec3(0.0, 0.0, -5.0));
+		transform = glm::scale(transform, glm::vec3(planetTopology.waterLevel));
 		waterShader.setMat4("model", transform); 
 
-		water.Draw(planetShader);
+    waterShader.setVec3("waterColor", glm::vec3(0.0f,0.0f,1.0f));
+    waterShader.setFloat("waterAlpha", 0.3f);
 
+		container.Bind(GL_TEXTURE0);
+		water.Draw(planetShader);
 
 #pragma region ImGui
 		ImGui_ImplGlfw_NewFrame();
@@ -178,11 +171,12 @@ int main() {
 		ImGui::SliderFloat("Shininess", &light.shininess, 2.0f, 1024.0f);
 		ImGui::End();
 
-		ImGui::Begin("Planet");
-		ImGui::SliderFloat("Water Level", &planetTopology.waterLevel, 0.05f, 3.0f);
-		ImGui::SliderFloat("Lowest Depth", &planetTopology.minRadius, 0.1f, 3.0f);
-		ImGui::SliderFloat("Highest Peak", &planetTopology.maxRadius, 0.1f, 3.0f);
-		ImGui::End();
+    ImGui::Begin("Planet");
+    ImGui::SliderFloat("Lowest Depth", &planetTopology.minRadius, 0.1f, 3.0f);
+    ImGui::SliderFloat("Highest Peak", &planetTopology.maxRadius, 0.1f, 3.0f);
+    ImGui::SliderFloat("Water Level", &planetTopology.waterLevel, 0.05f, 3.0f);
+    ImGui::SliderFloat("Mountain Roughness", &planetTopology.mountainRoughness, 0.05f, 3.0f);
+    ImGui::End();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

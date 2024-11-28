@@ -18,6 +18,7 @@ uniform mat4 projection;
 // planet
 uniform float minRadius;
 uniform float maxRadius;
+uniform float mountainRoughness;
 
 vec2 n22 (vec2 p)
 {
@@ -69,7 +70,7 @@ void main()
 
     vec3 fragColor = vec3(tempAlt);
 
-    float mountainScalar = maxRadius - minRadius;
+    float mountainScalar = (maxRadius - minRadius)/minRadius;
 
     NormalizedAltitude = tempAlt;
     vColor = vec4(fragColor, 1.0);
