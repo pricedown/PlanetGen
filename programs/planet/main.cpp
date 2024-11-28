@@ -81,9 +81,6 @@ int main() {
 
 	//jon code
 
-  pl::Mesh planet = pl::createSphere(planetTopology.minRadius, 256);
-  pl::Mesh water = pl::createSphere(planetTopology.minRadius + planetTopology.waterLevel, 256);
-
 	while (!glfwWindowShouldClose(window)) {
 		// Inputs
 		glfwPollEvents();
@@ -117,6 +114,8 @@ int main() {
 		boxMesh.DrawArray(lightShader);
 
 		// planet
+    pl::Mesh planet = pl::createSphere(planetTopology.minRadius, 256);
+
 		glEnable(GL_DEPTH_TEST);
 
 		planetShader.use();
@@ -144,6 +143,7 @@ int main() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
     waterShader.use();
 
+    pl::Mesh water = pl::createSphere(planetTopology.waterLevel, 256);
 		waterShader.setVec3("viewPos", camera.getPosition());
     waterShader.setLight(waterLight);
     waterShader.setVec3("waterColor", glm::vec3(0.0f,0.0f,1.0f)); // TODO: formalize
