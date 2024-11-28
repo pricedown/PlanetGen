@@ -132,6 +132,7 @@ int main() {
 		planetShader.setFloat("minRadius", planetTopology.minRadius);
 		planetShader.setFloat("maxRadius", planetTopology.maxRadius);
 		planetShader.setFloat("mountainRoughness", planetTopology.mountainRoughness);
+    planetShader.setFloat("waterLevel", planetTopology.waterLevel);
 
 		container.Bind(GL_TEXTURE0);
 		planet.Draw(planetShader);
@@ -172,9 +173,9 @@ int main() {
 		ImGui::End();
 
     ImGui::Begin("Planet");
-    ImGui::SliderFloat("Ground Depth", &planetTopology.minRadius, 0.1f, 3.0f);
-    ImGui::SliderFloat("Ground Peak", &planetTopology.maxRadius, 0.1f, 3.0f);
-    ImGui::SliderFloat("Ground Roughness", &planetTopology.mountainRoughness, 0.05f, 3.0f);
+    ImGui::SliderFloat("Ground Depth", &planetTopology.minRadius, 0.1f, 5.0f);
+    ImGui::SliderFloat("Ground Peak", &planetTopology.maxRadius, 0.1f, 5.0f);
+    ImGui::SliderFloat("Ground Roughness", &planetTopology.mountainRoughness, 0.05f, 5.0f);
     ImGui::SliderFloat("Water Level", &planetTopology.waterLevel, 0.05f, 3.0f);
     ImGui::End();
 

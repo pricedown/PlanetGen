@@ -68,10 +68,10 @@ void main()
     NormalizedAltitude = pow(perlin_noise(uv,10.0), mountainRoughness);
 
     float mountainScalar = (maxRadius - minRadius)/minRadius;
-    float height = mountainScalar * NormalizedAltitude;
+    float altitude = mountainScalar * NormalizedAltitude;
 
     TexCoord = aTexCoord;
-    gl_Position = projection * view * model * vec4(aPos + vec3(height) * aNormal, 1.0);
+    gl_Position = projection * view * model * vec4(aPos + vec3(altitude) * aNormal, 1.0);
     Normal = mat3(transpose(inverse(model))) * aNormal;
     FragPos = vec3(model * vec4(aPos, 1.0));
 }
