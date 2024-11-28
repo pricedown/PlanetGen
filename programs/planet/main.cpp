@@ -66,7 +66,7 @@ int main() {
 	pl::Shader planetShader = pl::Shader("assets/shaders/noise.vert", "assets/shaders/noise.frag");
 	pl::Shader waterShader = pl::Shader("assets/shaders/water.vert", "assets/shaders/water.frag");
 	pl::Shader lightShader = pl::Shader("assets/shaders/light.vert", "assets/shaders/light.frag");
-	pl::Texture2D container = pl::Texture2D("assets/textures/container.jpg", GL_LINEAR, GL_REPEAT);
+	pl::Texture2D container = pl::Texture2D("assets/textures/Texturelabs_Soil_134L.jpg", GL_LINEAR, GL_REPEAT);
 
   pl::Light light;
 	light.pos = glm::vec3(0.0f, 0.0f, 4.0f);
@@ -174,7 +174,7 @@ int main() {
     ImGui::Begin("Planet");
     ImGui::SliderFloat("Ground Depth", &planetTopology.minRadius, 0.1f, 3.0f);
     ImGui::SliderFloat("Ground Peak", &planetTopology.maxRadius, 0.1f, 3.0f);
-    ImGui::SliderFloat("Ground Roughness", &planetTopology.mountainRoughness, 0.05f, 10.0f);
+    ImGui::SliderFloat("Ground Roughness", &planetTopology.mountainRoughness, 0.05f, 3.0f);
     ImGui::SliderFloat("Water Level", &planetTopology.waterLevel, 0.05f, 3.0f);
     ImGui::End();
 
