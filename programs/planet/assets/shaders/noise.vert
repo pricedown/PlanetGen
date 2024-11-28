@@ -5,7 +5,6 @@ layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoord;
 
 out vec2 TexCoord;
-out vec4 vColor;
 out vec3 Normal;
 out vec3 FragPos;
 out float NormalizedAltitude;
@@ -66,16 +65,13 @@ void main()
 
     vec3 col = 0.5 + 0.5*cos(uTime+uv.xyx+vec3(0,2,4));
 
-    float tempAlt = perlin_noise(uv, 10.0);
-
-    vec3 fragColor = vec3(tempAlt);
+    NormalizedAltitude = pow(perlin_noise(uv,10.0), mountainRoughness);
 
     float mountainScalar = (maxRadius - minRadius)/minRadius;
+    float height = mountainScalar * NormalizedAltitude;
 
-    NormalizedAltitude = tempAlt;
-    vColor = vec4(fragColor, 1.0);
     TexCoord = aTexCoord;
-    gl_Position = projection * view * model * vec4(aPos + mountainScalar*fragColor * aNormal, 1.0);
+    gl_Position = projection * view * model * vec4(aPos + vec3(height) * aNormal, 1.0);
     Normal = mat3(transpose(inverse(model))) * aNormal;
     FragPos = vec3(model * vec4(aPos, 1.0));
 }

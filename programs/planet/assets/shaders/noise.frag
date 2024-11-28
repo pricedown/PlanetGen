@@ -82,10 +82,12 @@ void main() {
   vec3 green = vec3(0.0, 1.0, 0.0);
   vec3 blue = vec3(0.0, 0.0, 1.0);
 
+  float normalizedWaterLevel = waterLevel / maxRadius;
+
   vec3 altitudeCol;
-  layers[0] = Layer(-waterLevel, vec3(0.0, 0.0, 1.0));       // Water below sea
+  layers[0] = Layer(-normalizedWaterLevel, vec3(0.0, 0.0, 1.0));       // Water below sea
   layers[1] = Layer(0.0, vec3(0.0, 0.0, 1.0));        // Water at sea level
-  layers[2] = Layer(waterLevel, vec3(0.133, 0.545, 0.133));  // Land
+  layers[2] = Layer(normalizedWaterLevel, vec3(0.133, 0.545, 0.133));  // Land
   layers[3] = Layer(0.7, vec3(0.333, 0.419, 0.184));  // Land (more olive green)
   layers[4] = Layer(0.8, vec3(0.345, 0.471, 0.074));  // Land (brownish)
   layers[5] = Layer(0.85, vec3(0.933, 0.933, 0.933)); // Transition to snow

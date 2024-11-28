@@ -172,10 +172,10 @@ int main() {
 		ImGui::End();
 
     ImGui::Begin("Planet");
-    ImGui::SliderFloat("Lowest Depth", &planetTopology.minRadius, 0.1f, 3.0f);
-    ImGui::SliderFloat("Highest Peak", &planetTopology.maxRadius, 0.1f, 3.0f);
+    ImGui::SliderFloat("Ground Depth", &planetTopology.minRadius, 0.1f, 3.0f);
+    ImGui::SliderFloat("Ground Peak", &planetTopology.maxRadius, 0.1f, 3.0f);
+    ImGui::SliderFloat("Ground Roughness", &planetTopology.mountainRoughness, 0.05f, 10.0f);
     ImGui::SliderFloat("Water Level", &planetTopology.waterLevel, 0.05f, 3.0f);
-    ImGui::SliderFloat("Mountain Roughness", &planetTopology.mountainRoughness, 0.05f, 3.0f);
     ImGui::End();
 
 		ImGui::Render();
