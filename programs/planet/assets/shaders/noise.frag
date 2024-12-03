@@ -35,6 +35,8 @@ struct Layer {
 const int LAYER_COUNT = 7;
 Layer layers[LAYER_COUNT];
 
+vec3 grayScale = vec3(0.2126, 0.7152, 0.0722);
+
 vec3 altitudeColor(float altitude) {
   if (layers[0].altitude > altitude)
     return layers[0].color;
@@ -56,6 +58,8 @@ vec3 altitudeColor(float altitude) {
 
 void main() {
   vec3 objectColor = vec3(texture(tex,TexCoord));
+
+  float objectColorGrayscale = dot(objectColor, grayScale);
 
   vec3 norm = normalize(Normal);
   vec3 lightDir = normalize(lightPos - FragPos);  
@@ -79,7 +83,7 @@ void main() {
   }
   vec3 specular = lightColor * spec * specularStrength;
 
-  vec3 result = (ambient + diffuse + specular) * objectColor;
+  vec3 result = (ambient + diffuse + specular) * objectColorGrayscale;
   vec3 green = vec3(0.0, 1.0, 0.0);
   vec3 blue = vec3(0.0, 0.0, 1.0);
 
