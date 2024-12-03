@@ -7,6 +7,7 @@ struct Planet {
     float maxRadius = 2.5f; // max mountain height
     float mountainRoughness = 1.0f; // exponent to noise
     float waterLevel = 2.0f; // scale of the water mesh
+    float mountainFrequency = 3.0f;
 };
 
 } // namespace pl

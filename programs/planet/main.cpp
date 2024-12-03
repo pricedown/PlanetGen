@@ -82,8 +82,6 @@ int main() {
   pl::Mesh planet = pl::createSphere(1.0, 256);
   pl::Mesh water = pl::createSphere(1.0, 256);
 
-	//jon code
-
 	while (!glfwWindowShouldClose(window)) {
 		// Inputs
 		glfwPollEvents();
@@ -134,6 +132,8 @@ int main() {
 		planetShader.setFloat("mountainRoughness", planetTopology.mountainRoughness);
     planetShader.setFloat("waterLevel", planetTopology.waterLevel);
 
+	planetShader.setFloat("frequency", planetTopology.mountainFrequency);
+
 		container.Bind(GL_TEXTURE0);
 		planet.Draw(planetShader);
 
@@ -173,10 +173,12 @@ int main() {
 		ImGui::End();
 
     ImGui::Begin("Planet");
-    ImGui::SliderFloat("Ground Depth", &planetTopology.minRadius, 0.1f, 5.0f);
-    ImGui::SliderFloat("Ground Peak", &planetTopology.maxRadius, 0.1f, 5.0f);
-    ImGui::SliderFloat("Ground Roughness", &planetTopology.mountainRoughness, 0.05f, 5.0f);
-    ImGui::SliderFloat("Water Level", &planetTopology.waterLevel, 0.05f, 3.0f);
+    ImGui::SliderFloat("Ground Depth", &planetTopology.minRadius, 0.1f, 7.0f);
+    ImGui::SliderFloat("Ground Peak", &planetTopology.maxRadius, 0.1f, 7.0f);
+    ImGui::SliderFloat("Ground Roughness", &planetTopology.mountainRoughness, 0.05f, 7.0f);
+    ImGui::SliderFloat("Water Level", &planetTopology.waterLevel, 0.05f, 7.0f);
+    ImGui::SliderFloat("Mountain Frequency", &planetTopology.mountainFrequency, 0.05f, 15.0f);
+	
     ImGui::End();
 
 		ImGui::Render();

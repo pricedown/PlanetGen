@@ -19,6 +19,9 @@ uniform float minRadius;
 uniform float maxRadius;
 uniform float mountainRoughness;
 
+// noise 
+uniform float frequency;
+
 vec2 n22 (vec2 p)
 {
     vec3 a = fract(p.xyx * vec3(123.34, 234.34, 345.65));
@@ -65,13 +68,47 @@ float perlin_noise(vec2 uv, float cells_count)
     return 0.5 + 0.5 * noise_value;
 }
 
+vec2 GetGradient(vec2 intPos, float t) {
+    
+    // Uncomment for calculated rand
+    float rand = fract(sin(dot(intPos, vec2(12.9898, 78.233))) * 43758.5453);;
+    
+    // Texture-based rand (a bit faster on my GPU)
+    //float rand = perlin_noise(intPos / 64.0, 1000000.0);
+    
+    // Rotate gradient: random starting rotation, random rotation rate
+    float angle = 6.283185 * rand + 4.0 * t * rand;
+    return vec2(cos(angle), sin(angle));
+}
+
+float Pseudo3dNoise(vec3 pos) {
+    vec2 i = floor(pos.xy);
+    vec2 f = pos.xy - i;
+    vec2 blend = f * f * (3.0 - 2.0 * f);
+    float noiseVal = 
+        mix(
+            mix(
+                dot(GetGradient(i + vec2(0, 0), pos.z), f - vec2(0, 0)),
+                dot(GetGradient(i + vec2(1, 0), pos.z), f - vec2(1, 0)),
+                blend.x),
+            mix(
+                dot(GetGradient(i + vec2(0, 1), pos.z), f - vec2(0, 1)),
+                dot(GetGradient(i + vec2(1, 1), pos.z), f - vec2(1, 1)),
+                blend.x),
+        blend.y
+    );
+    return 0.5 + 0.5 * (noiseVal / 0.7); // normalize to about [-1..1]
+}
+
+
+
 void main()
 {
     vec2 uv = aTexCoord;
 
     vec3 col = 0.5 + 0.5*cos(uTime+uv.xyx+vec3(0,2,4));
 
-    NormalizedAltitude = pow(perlin_noise(uv,10.0), mountainRoughness);
+    NormalizedAltitude = pow(Pseudo3dNoise(aPos * frequency), mountainRoughness);
 
     float mountainScalar = (maxRadius - minRadius)/minRadius;
     float altitude = mountainScalar * NormalizedAltitude;
@@ -83,3 +120,4 @@ void main()
 }
 
 //https://www.shadertoy.com/view/DsK3W1
+//https://www.shadertoy.com/view/MtcGRl
