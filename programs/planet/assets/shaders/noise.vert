@@ -21,6 +21,7 @@ uniform float mountainRoughness;
 
 // noise 
 uniform float frequency;
+uniform vec3 seed;
 
 vec2 n22 (vec2 p)
 {
@@ -108,7 +109,7 @@ void main()
 
     vec3 col = 0.5 + 0.5*cos(uTime+uv.xyx+vec3(0,2,4));
 
-    NormalizedAltitude = pow(Pseudo3dNoise(aPos * frequency), mountainRoughness);
+    NormalizedAltitude = pow(Pseudo3dNoise((aPos + seed) * frequency), mountainRoughness);
 
     float mountainScalar = (maxRadius - minRadius)/minRadius;
     float altitude = mountainScalar * NormalizedAltitude;

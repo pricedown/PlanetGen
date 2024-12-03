@@ -118,7 +118,7 @@ int main() {
 		glEnable(GL_DEPTH_TEST);
 
 		planetShader.use();
-    planetShader.setLight(light);
+		planetShader.setLight(light);
 		planetShader.setVec3("viewPos", camera.getPosition());
 		planetShader.setMat4("projection", projection);
 		planetShader.setMat4("view", view);
@@ -130,9 +130,9 @@ int main() {
 		planetShader.setFloat("minRadius", planetTopology.minRadius);
 		planetShader.setFloat("maxRadius", planetTopology.maxRadius);
 		planetShader.setFloat("mountainRoughness", planetTopology.mountainRoughness);
-    planetShader.setFloat("waterLevel", planetTopology.waterLevel);
-
-	planetShader.setFloat("frequency", planetTopology.mountainFrequency);
+		planetShader.setFloat("waterLevel", planetTopology.waterLevel);
+		planetShader.setFloat("frequency", planetTopology.mountainFrequency);
+		planetShader.setVec3("seed", planetTopology.seed);
 
 		container.Bind(GL_TEXTURE0);
 		planet.Draw(planetShader);
@@ -172,14 +172,14 @@ int main() {
 		ImGui::SliderFloat("Shininess", &light.shininess, 2.0f, 1024.0f);
 		ImGui::End();
 
-    ImGui::Begin("Planet");
-    ImGui::SliderFloat("Ground Depth", &planetTopology.minRadius, 0.1f, 7.0f);
-    ImGui::SliderFloat("Ground Peak", &planetTopology.maxRadius, 0.1f, 7.0f);
-    ImGui::SliderFloat("Ground Roughness", &planetTopology.mountainRoughness, 0.05f, 7.0f);
-    ImGui::SliderFloat("Water Level", &planetTopology.waterLevel, 0.05f, 7.0f);
-    ImGui::SliderFloat("Mountain Frequency", &planetTopology.mountainFrequency, 0.05f, 15.0f);
-	
-    ImGui::End();
+		ImGui::Begin("Planet");
+		ImGui::SliderFloat("Ground Depth", &planetTopology.minRadius, 0.1f, 7.0f);
+		ImGui::SliderFloat("Ground Peak", &planetTopology.maxRadius, 0.1f, 7.0f);
+		ImGui::SliderFloat("Ground Roughness", &planetTopology.mountainRoughness, 0.05f, 7.0f);
+		ImGui::SliderFloat("Water Level", &planetTopology.waterLevel, 0.05f, 7.0f);
+		ImGui::SliderFloat("Mountain Frequency", &planetTopology.mountainFrequency, 0.05f, 15.0f);
+		ImGui::DragFloat3("Seed", &planetTopology.seed.x, 0.1f);
+		ImGui::End();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
