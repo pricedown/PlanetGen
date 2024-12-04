@@ -66,6 +66,7 @@ int main() {
 	pl::Shader planetShader = pl::Shader("assets/shaders/noise.vert", "assets/shaders/noise.frag");
 	pl::Shader waterShader = pl::Shader("assets/shaders/water.vert", "assets/shaders/water.frag");
 	pl::Shader lightShader = pl::Shader("assets/shaders/light.vert", "assets/shaders/light.frag");
+	pl::Shader spaceShader = pl::Shader("assets/shaders/space.vert", "assets/shaders/space.frag");
 	pl::Texture2D container = pl::Texture2D("assets/textures/Texturelabs_Soil_134L.jpg", GL_LINEAR, GL_REPEAT);
 
   pl::Light light;
@@ -81,6 +82,9 @@ int main() {
 
   pl::Mesh planet = pl::createSphere(1.0, 256);
   pl::Mesh water = pl::createSphere(1.0, 256);
+
+  pl::Mesh slight = pl::createSphere(1, 64);
+  pl::Mesh space = pl::createSphere(128.0, 256);
 
 	while (!glfwWindowShouldClose(window)) {
 		// Inputs
@@ -112,7 +116,8 @@ int main() {
 		lightShader.setMat4("model", lightModel);
 		lightShader.setVec3("lightPos", light.pos);
 		lightShader.setVec3("lightColor", light.color);
-		boxMesh.DrawArray(lightShader);
+		lightShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+		slight.Draw(lightShader);
 
 		// planet
 		glEnable(GL_DEPTH_TEST);
@@ -156,6 +161,19 @@ int main() {
 
 		container.Bind(GL_TEXTURE0);
 		water.Draw(planetShader);
+
+		//space
+		spaceShader.use();
+		spaceShader.setLight(waterLight);
+		spaceShader.setVec3("viewPos", camera.getPosition());
+		spaceShader.setMat4("projection", projection);
+		spaceShader.setMat4("view", view);
+		spaceShader.setMat4("model", transform);
+
+		spaceShader.setVec3("waterColor", glm::vec3(0.0f, 0.0f, 0.0f));
+		spaceShader.setFloat("waterAlpha", 1.0f);
+
+		space.Draw(spaceShader);
 
 #pragma region ImGui
 		ImGui_ImplGlfw_NewFrame();
