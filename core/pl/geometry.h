@@ -88,11 +88,11 @@ namespace pl {
 		std::vector<pl::Vertex> vertices;
 		for (int row = 0; row <= subdiv; row++) {
 			for (int col = 0; col <= subdiv; col++) {
-				
+
 				pl::Vertex v;
 
 				v.pos.x = width * ((float)col / subdiv);
-				v.pos.y = height *((float)row / subdiv);
+				v.pos.y = height * ((float)row / subdiv);
 				v.pos.z = 0.0;
 
 				v.norm.x = 0;

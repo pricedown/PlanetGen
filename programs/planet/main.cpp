@@ -22,8 +22,8 @@
 #include "pl/noise.h"
 #include "pl/planet.h"
 
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1080;
+const int SCREEN_WIDTH = 1280;
+const int SCREEN_HEIGHT = 720;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -31,7 +31,7 @@ float lastFrame = 0.0f;
 pl::Camera camera(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main() {
-	#pragma region Initialization
+#pragma region Initialization
 	printf("Initializing...");
 	GLFWwindow* window;
 	if (!glfwInit()) {
@@ -55,13 +55,13 @@ int main() {
 	ImGui_ImplOpenGL3_Init();
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); //Unlocks mouse
-	#pragma endregion
-	#pragma region Geometry data
+#pragma endregion
+#pragma region Geometry data
 	pl::Mesh boxMesh(pl::cubeVertices, sizeof(pl::cubeVertices));
-	#pragma endregion
-	#pragma region World
+#pragma endregion
+#pragma region World
 	pl::initCubes();
-	#pragma endregion
+#pragma endregion
 
 	pl::Shader planetShader = pl::Shader("assets/shaders/noise.vert", "assets/shaders/noise.frag");
 	pl::Shader waterShader = pl::Shader("assets/shaders/water.vert", "assets/shaders/water.frag");
@@ -69,22 +69,26 @@ int main() {
 	pl::Shader spaceShader = pl::Shader("assets/shaders/space.vert", "assets/shaders/space.frag");
 	pl::Texture2D container = pl::Texture2D("assets/textures/Texturelabs_Soil_134L.jpg", GL_LINEAR, GL_REPEAT);
 
-  pl::Light light;
+	pl::Light light;
 	light.pos = glm::vec3(0.0f, 0.0f, 4.0f);
 	light.ambientK = 0.8f;
-  light.diffuseK = 0.8f;
+	light.diffuseK = 0.8f;
 
-  pl::Light waterLight;
+	pl::Light waterLight;
 	waterLight.pos = glm::vec3(0.0f, 0.0f, 4.0f);
 	waterLight.specularK = 1.0f;
 
-  pl::Planet planetTopology;
+	pl::Planet planetTopology;
 
-  pl::Mesh planet = pl::createSphere(1.0, 256);
-  pl::Mesh water = pl::createSphere(1.0, 256);
+	pl::Mesh planet = pl::createSphere(1.0, 256);
+	pl::Mesh water = pl::createSphere(1.0, 256);
 
-  pl::Mesh slight = pl::createSphere(1, 64);
-  pl::Mesh space = pl::createSphere(128.0, 256);
+	pl::Mesh slight = pl::createSphere(1, 64);
+	pl::Mesh space = pl::createSphere(128.0, 256);
+
+
+	glm::vec3 waterDeepest = glm::vec3(0.05,0.05,1.0);
+	glm::vec3 waterLand = glm::vec3(0.2,0.2,0.3);
 
 	while (!glfwWindowShouldClose(window)) {
 		// Inputs
@@ -130,7 +134,7 @@ int main() {
 		glm::mat4 ptransform = glm::mat4(1.0f);
 		ptransform = glm::translate(ptransform, glm::vec3(0.0, 0.0, -5.0));
 		ptransform = glm::scale(ptransform, glm::vec3(planetTopology.minRadius));
-		planetShader.setMat4("model", ptransform); 
+		planetShader.setMat4("model", ptransform);
 
 		planetShader.setFloat("minRadius", planetTopology.minRadius);
 		planetShader.setFloat("maxRadius", planetTopology.maxRadius);
@@ -142,22 +146,22 @@ int main() {
 		container.Bind(GL_TEXTURE0);
 		planet.Draw(planetShader);
 
-    // water
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+		// water
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    waterShader.use();
-    waterShader.setLight(waterLight);
+		waterShader.use();
+		waterShader.setLight(waterLight);
 		waterShader.setVec3("viewPos", camera.getPosition());
 		waterShader.setMat4("projection", projection);
 		waterShader.setMat4("view", view);
 		glm::mat4 transform = glm::mat4(1.0f);
 		transform = glm::translate(transform, glm::vec3(0.0, 0.0, -5.0));
 		transform = glm::scale(transform, glm::vec3(planetTopology.waterLevel));
-		waterShader.setMat4("model", transform); 
+		waterShader.setMat4("model", transform);
 
-    waterShader.setVec3("waterColor", glm::vec3(0.0f,0.0f,1.0f));
-    waterShader.setFloat("waterAlpha", 0.3f);
+		waterShader.setVec3("waterColor", glm::vec3(0.0f, 0.0f, 1.0f));
+		waterShader.setFloat("waterAlpha", 0.3f);
 
 		container.Bind(GL_TEXTURE0);
 		water.Draw(planetShader);

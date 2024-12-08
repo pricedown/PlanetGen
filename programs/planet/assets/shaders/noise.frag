@@ -32,7 +32,7 @@ struct Layer {
     vec3 color;
 };
 
-const int LAYER_COUNT = 7;
+const int LAYER_COUNT = 8;
 Layer layers[LAYER_COUNT];
 
 vec3 grayScale = vec3(0.2126, 0.7152, 0.0722);
@@ -54,6 +54,13 @@ vec3 altitudeColor(float altitude) {
   }
 
   return vec3(0.0);
+}
+
+vec3 powColor(vec3 color, float amount) {
+    color.r = pow(color.r, amount);
+    color.g = pow(color.g, amount);
+    color.b = pow(color.b, amount);
+    return color;
 }
 
 void main() {
@@ -89,14 +96,37 @@ void main() {
 
   float normalizedWaterLevel = (waterLevel-minRadius) / (maxRadius-minRadius);
 
+  float waterDeep = -0.4;
+  vec3 waterDeepest = vec3(0.05,0.05,1.0);
+  vec3 waterLand = vec3(0.2,0.2,0.3);
+  vec3 sand = vec3(0.79, 0.74, 0.57);
+  float waterTransition = 0.1;
+  float sandTransition = 0.1;
+
+  vec3 altitudeCol;
+  /*
+  vec3 sand = vec3(0.79, 0.74, 0.57);
+  vec3 land = vec3(0.133, 0.545, 0.133);
   vec3 altitudeCol;
   layers[0] = Layer(-10.0, vec3(0.0, 0.0, 1.0));       // Water below sea
   layers[1] = Layer(normalizedWaterLevel-0.1, vec3(0.0,0.0,0.2f));        // Water at sea level
-  layers[2] = Layer(normalizedWaterLevel, vec3(0.133, 0.545, 0.133));  // Land
-  layers[3] = Layer(0.7, vec3(0.333, 0.419, 0.184));  // Land (more olive green)
-  layers[4] = Layer(0.8, vec3(0.345, 0.471, 0.074));  // Land (brownish)
-  layers[5] = Layer(0.85, vec3(0.933, 0.933, 0.933)); // Transition to snow
-  layers[6] = Layer(1.0, vec3(1.0, 1.0, 1.0));        // Snow 
+  layers[2] = Layer(normalizedWaterLevel, sand);  // Land
+  layers[3] = Layer(normalizedWaterLevel+0.1, land);  // Land
+  layers[4] = Layer(0.7, vec3(0.333, 0.419, 0.184));  // Land (more olive green)
+  layers[5] = Layer(0.8, vec3(0.345, 0.471, 0.074));  // Land (brownish)
+  layers[6] = Layer(0.85, vec3(0.933, 0.933, 0.933)); // Transition to snow
+  layers[7] = Layer(1.0, vec3(1.0, 1.0, 1.0));        // Snow 
+  altitudeCol = altitudeColor(NormalizedAltitude);
+  */
+
+  layers[0] = Layer(waterDeep, waterDeepest);       // Water below sea
+  layers[1] = Layer(normalizedWaterLevel-waterTransition, waterLand);        // Water at sea level
+  layers[2] = Layer(normalizedWaterLevel, sand);        // Water at sea level
+  layers[3] = Layer(normalizedWaterLevel+sandTransition, powColor(vec3(0.333, 0.419, 0.184), 0.005)*sand*vec3(0.133, 0.530, 0.133));  // Land
+  layers[4] = Layer(0.75, vec3(0.333, 0.419, 0.184));  // Land (more olive green)
+  layers[5] = Layer(0.8, vec3(0.345, 0.471, 0.074));  // Land (brownish)
+  layers[6] = Layer(0.85, vec3(0.933, 0.933, 0.933)); // Transition to snow
+  layers[7] = Layer(1.0, vec3(1.0, 1.0, 1.0));        // Snow 
   altitudeCol = altitudeColor(NormalizedAltitude);
 
   FragColor = vec4(altitudeCol * result, 1.0);
