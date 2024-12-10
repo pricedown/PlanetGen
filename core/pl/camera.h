@@ -59,6 +59,7 @@ namespace pl {
 		bool firstMouse = true;
 		//FOV
 		float fov = 45.0f;
+		float orthoSize = 5.0f;
 		//Screen 
 		float SCREEN_WIDTH;
 		float SCREEN_HEIGHT;

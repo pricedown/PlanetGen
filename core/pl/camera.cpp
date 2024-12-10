@@ -84,6 +84,9 @@ void Camera::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 		fov -= (float)yoffset;
 	if (fov < 1.0f) fov = 1.0f;
 	if (fov > 120.0f) fov = 120.0f;
+		orthoSize -= (float)yoffset;
+	if (orthoSize < 1.0f) orthoSize = 1.0f;
+	if (orthoSize > 10.0f) orthoSize = 10.0f;
 }
 void Camera::use(GLFWwindow* window) {
 	processInput(window);
@@ -107,7 +110,7 @@ void Camera::use(GLFWwindow* window) {
 glm::mat4 Camera::projection(glm::mat4& projection) const {
 	// Switch between projection and orthographic
 	if (perspective) projection = glm::perspective(glm::radians(fov), ((float)SCREEN_WIDTH / SCREEN_HEIGHT), 0.1f, 1000.0f);
-	else projection = glm::ortho(-5.0f, 5.0f, -5.0f * ((float)SCREEN_HEIGHT / SCREEN_WIDTH), 5.0f * ((float)SCREEN_HEIGHT / SCREEN_WIDTH), 0.1f, 1000.0f);
+	else projection = glm::ortho(-1 * orthoSize, orthoSize, -1 * orthoSize * ((float)SCREEN_HEIGHT / SCREEN_WIDTH), orthoSize * ((float)SCREEN_HEIGHT / SCREEN_WIDTH), 0.1f, 1000.0f);
 	return projection;
 }
 glm::mat4 Camera::projection() const {
