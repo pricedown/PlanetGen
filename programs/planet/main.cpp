@@ -19,7 +19,6 @@
 #include "pl/camera.h"
 #include "pl/geometry.h"
 #include "pl/mesh.h"
-#include "pl/noise.h"
 #include "pl/planet.h"
 
 const int SCREEN_WIDTH = 1280;
