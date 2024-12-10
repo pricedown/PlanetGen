@@ -79,7 +79,6 @@ void Camera::mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 	ImGui_ImplGlfw_CursorPosCallback(window, xpos, ypos);
 }
 void Camera::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-	\
 		// Get scroll
 		fov -= (float)yoffset;
 	if (fov < 1.0f) fov = 1.0f;

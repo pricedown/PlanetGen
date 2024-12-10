@@ -29,6 +29,22 @@ float lastFrame = 0.0f;
 
 pl::Camera camera(SCREEN_WIDTH, SCREEN_HEIGHT);
 
+void processInput(GLFWwindow* window, glm::mat4* model) {
+	float rotationSpeed = 2.0f * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+		*model = glm::rotate(*model, rotationSpeed, glm::vec3(0.0f, 1.0f, 0.0f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+		*model = glm::rotate(*model, rotationSpeed, glm::vec3(0.0f, -1.0f, 0.0f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+		*model = glm::rotate(*model, rotationSpeed, glm::vec3(1.0f, 0.0f, 0.0f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		*model = glm::rotate(*model, rotationSpeed, glm::vec3(-1.0f, 0.0f, 0.0f));
+	}
+}
+
 int main() {
 #pragma region Initialization
 	printf("Initializing...");
@@ -85,6 +101,9 @@ int main() {
 	pl::Mesh slight = pl::createSphere(1, 64);
 	pl::Mesh space = pl::createSphere(128.0, 256);
 
+	glm::mat4 ptransform = glm::mat4(1.0f);
+	ptransform = glm::translate(ptransform, glm::vec3(0.0, 0.0, -5.0));
+	ptransform = glm::scale(ptransform, glm::vec3(planetTopology.minRadius));
 
 	glm::vec3 waterDeepest = glm::vec3(0.05,0.05,1.0);
 	glm::vec3 waterLand = glm::vec3(0.2,0.2,0.3);
@@ -130,9 +149,7 @@ int main() {
 		planetShader.setVec3("viewPos", camera.getPosition());
 		planetShader.setMat4("projection", projection);
 		planetShader.setMat4("view", view);
-		glm::mat4 ptransform = glm::mat4(1.0f);
-		ptransform = glm::translate(ptransform, glm::vec3(0.0, 0.0, -5.0));
-		ptransform = glm::scale(ptransform, glm::vec3(planetTopology.minRadius));
+		processInput(window, &ptransform);
 		planetShader.setMat4("model", ptransform);
 
 		planetShader.setFloat("minRadius", planetTopology.minRadius);
@@ -175,6 +192,7 @@ int main() {
 
 		spaceShader.setVec3("waterColor", glm::vec3(0.0f, 0.0f, 0.0f));
 		spaceShader.setFloat("waterAlpha", 1.0f);
+
 
 		space.Draw(spaceShader);
 
