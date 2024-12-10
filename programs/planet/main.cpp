@@ -31,18 +31,20 @@ pl::Camera camera(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 void processInput(GLFWwindow* window, glm::mat4* model) {
 	float rotationSpeed = 2.0f * deltaTime;
+	glm::mat4 rotMatrix = glm::mat4(1.0f);
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		*model = glm::rotate(*model, rotationSpeed, glm::vec3(0.0f, 1.0f, 0.0f));
+		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		*model = glm::rotate(*model, rotationSpeed, glm::vec3(0.0f, -1.0f, 0.0f));
+		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(0.0f, -1.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		*model = glm::rotate(*model, rotationSpeed, glm::vec3(1.0f, 0.0f, 0.0f));
+		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(1.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		*model = glm::rotate(*model, rotationSpeed, glm::vec3(-1.0f, 0.0f, 0.0f));
+		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(-1.0f, 0.0f, 0.0f));
 	}
+	*model = rotMatrix * (*model);
 }
 
 int main() {
@@ -102,7 +104,6 @@ int main() {
 	pl::Mesh space = pl::createSphere(128.0, 256);
 
 	glm::mat4 ptransform = glm::mat4(1.0f);
-	ptransform = glm::translate(ptransform, glm::vec3(0.0, 0.0, -5.0));
 	ptransform = glm::scale(ptransform, glm::vec3(planetTopology.minRadius));
 
 	glm::vec3 waterDeepest = glm::vec3(0.05,0.05,1.0);
@@ -172,7 +173,6 @@ int main() {
 		waterShader.setMat4("projection", projection);
 		waterShader.setMat4("view", view);
 		glm::mat4 transform = glm::mat4(1.0f);
-		transform = glm::translate(transform, glm::vec3(0.0, 0.0, -5.0));
 		transform = glm::scale(transform, glm::vec3(planetTopology.waterLevel));
 		waterShader.setMat4("model", transform);
 
