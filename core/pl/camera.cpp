@@ -107,7 +107,7 @@ void Camera::use(GLFWwindow* window) {
 glm::mat4 Camera::projection(glm::mat4& projection) const {
 	// Switch between projection and orthographic
 	if (perspective) projection = glm::perspective(glm::radians(fov), ((float)SCREEN_WIDTH / SCREEN_HEIGHT), 0.1f, 1000.0f);
-	else projection = glm::ortho(-2.0f, 2.0f, -2.0f * ((float)SCREEN_HEIGHT / SCREEN_WIDTH), 2.0f * ((float)SCREEN_HEIGHT / SCREEN_WIDTH), 0.1f, 1000.0f);
+	else projection = glm::ortho(-5.0f, 5.0f, -5.0f * ((float)SCREEN_HEIGHT / SCREEN_WIDTH), 5.0f * ((float)SCREEN_HEIGHT / SCREEN_WIDTH), 0.1f, 1000.0f);
 	return projection;
 }
 glm::mat4 Camera::projection() const {
