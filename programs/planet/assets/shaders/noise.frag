@@ -40,20 +40,23 @@ vec3 altitudeColor(float altitude);
 
 vec3 powColor(vec3 color, float amount);
 
-float normalizedToRadius(float normalizedAltitude, float minRadius, float maxRadius);
+float normalizedToRadius(float normalizedAltitude) {
+    return minRadius + normalizedAltitude * (maxRadius - minRadius);
+}
+
+float radiusToNormalized(float radius) {
+    return (radius - minRadius) / (maxRadius - minRadius);
+}
 
 vec3 litColor(vec3 objectColor);
 vec3 grayScale(vec3 color);
 
 void main() {
   vec3 objectColor = vec3(texture(tex,TexCoord));
-  vec3 litColor = litColor(grayScale(objectColor));
-
+  vec3 grayColor = grayScale(objectColor);
 
   vec3 altitudeCol;
 
-  float normalizedWaterLevel = (waterLevel-minRadius) / (maxRadius-minRadius);
-  //float normalizedWaterLevel = clamp((waterLevel - minRadius) / (maxRadius - minRadius), 0.0, 1.0);
   float waterDeep = -0.4;
   vec3 waterDeepest = vec3(0.05,0.05,1.0);
   vec3 waterLand = vec3(0.2,0.2,0.3);
@@ -61,17 +64,19 @@ void main() {
   float waterTransition = 0.1;
   float sandTransition = 0.1;
 
-  layers[0] = Layer(waterDeep, waterDeepest);       // Water below sea
-  layers[1] = Layer(normalizedWaterLevel-waterTransition, waterLand);        // Water at sea level
-  layers[2] = Layer(normalizedWaterLevel, sand);        // Water at sea level
-  layers[3] = Layer(normalizedWaterLevel+sandTransition, powColor(vec3(0.333, 0.419, 0.184), 0.005)*sand*vec3(0.133, 0.530, 0.133));  // Land
-  layers[4] = Layer(0.75, vec3(0.333, 0.419, 0.184));  // Land (more olive green)
-  layers[5] = Layer(0.8, vec3(0.345, 0.471, 0.074));  // Land (brownish)
-  layers[6] = Layer(0.85, vec3(0.933, 0.933, 0.933)); // Transition to snow
-  layers[7] = Layer(1.0, vec3(1.0, 1.0, 1.0));        // Snow 
-  altitudeCol = altitudeColor(NormalizedAltitude);
+  layers[0] = Layer(normalizedToRadius(waterDeep), waterDeepest);       // Water below sea
+  layers[1] = Layer(waterLevel-normalizedToRadius(waterTransition), waterLand);        // Water at sea level
+  layers[2] = Layer(waterLevel, sand);        // Water at sea level
+  layers[3] = Layer(waterLevel+normalizedToRadius(sandTransition), powColor(vec3(0.333, 0.419, 0.184), 0.005)*sand*vec3(0.133, 0.530, 0.133));  // Land
+  layers[4] = Layer(normalizedToRadius(0.75), vec3(0.333, 0.419, 0.184));  // Land (more olive green)
+  layers[5] = Layer(normalizedToRadius(0.8), vec3(0.345, 0.471, 0.074));  // Land (brownish)
+  layers[6] = Layer(normalizedToRadius(0.85), vec3(0.933, 0.933, 0.933)); // Transition to snow
+  layers[7] = Layer(normalizedToRadius(1.0), vec3(1.0, 1.0, 1.0));        // Snow 
+  altitudeCol = altitudeColor(normalizedToRadius(NormalizedAltitude));
 
-  FragColor = vec4(altitudeCol * litColor, 1.0);
+  vec3 litColor = litColor(grayColor*altitudeCol);
+
+  FragColor = vec4(litColor, 1.0);
 
   // Debugs
   //FragColor = vec4(result, 1.0);
@@ -160,9 +165,3 @@ vec3 powColor(vec3 color, float amount) {
     color.b = pow(color.b, amount);
     return color;
 }
-
-float normalizedToRadius(float normalizedAltitude, float minRadius, float maxRadius) {
-    return minRadius + normalizedAltitude * (maxRadius - minRadius);
-}
-
-

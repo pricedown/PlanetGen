@@ -27,16 +27,28 @@ uniform vec3 seed;
 
 float Pseudo3dNoise(vec3 pos);
 
+float normalizedToRadius(float normalizedAltitude) {
+    return minRadius + normalizedAltitude * (maxRadius - minRadius);
+}
+
+float radiusToNormalized(float radius) {
+    return (radius - minRadius) / (maxRadius - minRadius);
+}
+
 void main()
 {
     vec2 uv = aTexCoord;
 
     vec3 col = 0.5 + 0.5*cos(uTime+uv.xyx+vec3(0,2,4));
 
-    NormalizedAltitude = pow(Pseudo3dNoise((aPos + seed) * frequency), mountainRoughness);
+    float normalizedNoise = Pseudo3dNoise((aPos + seed) * frequency);
+
+    NormalizedAltitude = pow(normalizedNoise, mountainRoughness);
 
     float mountainScalar = (maxRadius - minRadius)/minRadius;
     float altitude = mountainScalar * NormalizedAltitude;
+    //float altitude = normalizedToRadius(NormalizedAltitude); // doesn't work?
+
 
     TexCoord = aTexCoord;
     gl_Position = projection * view * model * vec4(aPos + vec3(altitude) * aNormal, 1.0);
