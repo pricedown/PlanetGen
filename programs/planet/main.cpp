@@ -21,8 +21,8 @@
 #include "pl/mesh.h"
 #include "pl/planet.h"
 
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1080;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;

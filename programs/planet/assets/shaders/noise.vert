@@ -9,7 +9,7 @@ layout (location = 2) in vec2 aTexCoord;
 out vec2 TexCoord;
 out vec3 Normal;
 out vec3 FragPos;
-out float NormalizedAltitude;
+out float NormalizedAltitude; // [0-1] from lowest depth to highest peak
 
 uniform float uTime;
 uniform mat4 model;
@@ -24,6 +24,25 @@ uniform float mountainRoughness;
 // noise 
 uniform float frequency;
 uniform vec3 seed;
+
+float Pseudo3dNoise(vec3 pos);
+
+void main()
+{
+    vec2 uv = aTexCoord;
+
+    vec3 col = 0.5 + 0.5*cos(uTime+uv.xyx+vec3(0,2,4));
+
+    NormalizedAltitude = pow(Pseudo3dNoise((aPos + seed) * frequency), mountainRoughness);
+
+    float mountainScalar = (maxRadius - minRadius)/minRadius;
+    float altitude = mountainScalar * NormalizedAltitude;
+
+    TexCoord = aTexCoord;
+    gl_Position = projection * view * model * vec4(aPos + vec3(altitude) * aNormal, 1.0);
+    Normal = mat3(transpose(inverse(model))) * aNormal;
+    FragPos = vec3(model * vec4(aPos, 1.0));
+}
 
 vec2 n22 (vec2 p)
 {
@@ -101,25 +120,6 @@ float Pseudo3dNoise(vec3 pos) {
         blend.y
     );
     return 0.5 + 0.5 * (noiseVal / 0.7); // normalize to about [-1..1]
-}
-
-
-
-void main()
-{
-    vec2 uv = aTexCoord;
-
-    vec3 col = 0.5 + 0.5*cos(uTime+uv.xyx+vec3(0,2,4));
-
-    NormalizedAltitude = pow(Pseudo3dNoise((aPos + seed) * frequency), mountainRoughness);
-
-    float mountainScalar = (maxRadius - minRadius)/minRadius;
-    float altitude = mountainScalar * NormalizedAltitude;
-
-    TexCoord = aTexCoord;
-    gl_Position = projection * view * model * vec4(aPos + vec3(altitude) * aNormal, 1.0);
-    Normal = mat3(transpose(inverse(model))) * aNormal;
-    FragPos = vec3(model * vec4(aPos, 1.0));
 }
 
 //https://www.shadertoy.com/view/DsK3W1
