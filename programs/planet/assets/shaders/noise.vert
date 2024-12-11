@@ -9,6 +9,7 @@ layout (location = 2) in vec2 aTexCoord;
 out vec2 TexCoord;
 out vec3 Normal;
 out vec3 FragPos;
+out float Radius;
 out float NormalizedAltitude; // [0-1] from lowest depth to highest peak
 
 uniform float uTime;
@@ -28,32 +29,32 @@ uniform vec3 seed;
 float Pseudo3dNoise(vec3 pos);
 
 float normalizedToRadius(float normalizedAltitude) {
-    return minRadius + normalizedAltitude * (maxRadius - minRadius);
+    return minRadius + normalizedAltitude * abs(maxRadius - minRadius);
 }
 
 float radiusToNormalized(float radius) {
-    return (radius - minRadius) / (maxRadius - minRadius);
+    return (radius - minRadius) / abs(maxRadius - minRadius);
 }
 
 void main()
 {
     vec2 uv = aTexCoord;
-
     vec3 col = 0.5 + 0.5*cos(uTime+uv.xyx+vec3(0,2,4));
 
-    float normalizedNoise = Pseudo3dNoise((aPos + seed) * frequency);
+    float mountainHeight = maxRadius - minRadius;
+    float noise = Pseudo3dNoise((aPos + seed) * frequency);
+    float normalizedHills = pow(noise, mountainRoughness);
+    float hills = normalizedHills * mountainHeight;
 
-    NormalizedAltitude = pow(normalizedNoise, mountainRoughness);
-
-    float mountainScalar = (maxRadius - minRadius)/minRadius;
-    float altitude = mountainScalar * NormalizedAltitude;
-    //float altitude = normalizedToRadius(NormalizedAltitude); // doesn't work?
-
+    NormalizedAltitude = normalizedHills;
+    
+    Radius = minRadius + hills;
+    vec3 pos = (Radius * aNormal);
 
     TexCoord = aTexCoord;
-    gl_Position = projection * view * model * vec4(aPos + vec3(altitude) * aNormal, 1.0);
+    gl_Position = projection * view * model * vec4(pos, 1.0);
     Normal = mat3(transpose(inverse(model))) * aNormal;
-    FragPos = vec3(model * vec4(aPos, 1.0));
+    FragPos = vec3(model * vec4(pos, 1.0));
 }
 
 vec2 n22 (vec2 p)

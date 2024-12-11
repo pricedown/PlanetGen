@@ -104,7 +104,7 @@ int main() {
 	pl::Mesh space = pl::createSphere(128.0, 256);
 
 	glm::mat4 ptransform = glm::mat4(1.0f);
-	ptransform = glm::scale(ptransform, glm::vec3(planetTopology.minRadius));
+	//ptransform = glm::scale(ptransform, glm::vec3(planetTopology.minRadius));
 
 	glm::vec3 waterDeepest = glm::vec3(0.05,0.05,1.0);
 	glm::vec3 waterLand = glm::vec3(0.2,0.2,0.3);
@@ -173,10 +173,11 @@ int main() {
 		waterShader.setMat4("projection", projection);
 		waterShader.setMat4("view", view);
 		glm::mat4 transform = glm::mat4(1.0f);
-		transform = glm::scale(transform, glm::vec3(planetTopology.waterLevel));
+		//transform = glm::scale(transform, glm::vec3(planetTopology.waterLevel));
 		waterShader.setMat4("model", transform);
 
 		waterShader.setVec3("waterColor", glm::vec3(0.0f, 0.0f, 1.0f));
+		waterShader.setFloat("waterLevel", planetTopology.waterLevel);
 		waterShader.setFloat("waterAlpha", 0.3f);
 
 		container.Bind(GL_TEXTURE0);
