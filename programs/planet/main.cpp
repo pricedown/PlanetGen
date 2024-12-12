@@ -76,7 +76,7 @@ int main() {
 	pl::Waves waves;
 
 	pl::Light light;
-	light.pos = glm::vec3(0.0f, 0.0f, 4.0f);
+	light.pos = glm::vec3(0.0f, 0.0f, 20.0f);
 	light.ambientK = 0.8f;
 	light.diffuseK = 0.8f;
 
