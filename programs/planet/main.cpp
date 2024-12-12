@@ -21,6 +21,7 @@
 #include "pl/geometry.h"
 #include "pl/mesh.h"
 #include "pl/planet.h"
+#include "pl/cubemap.h"
 
 const int SCREEN_WIDTH = 1920;
 const int SCREEN_HEIGHT = 1080;
@@ -66,7 +67,6 @@ int main() {
 	pl::Mesh water = pl::createSphere(1.0, 256);
 
 	pl::Mesh slight = pl::createSphere(1, 64);
-	pl::Mesh space = pl::createSphere(128.0, 256);
 #pragma endregion
 
 #pragma region World
@@ -102,6 +102,15 @@ int main() {
 	pl::Shader lightShader = pl::Shader("assets/shaders/light.vert", "assets/shaders/light.frag");
 	pl::Shader spaceShader = pl::Shader("assets/shaders/space.vert", "assets/shaders/space.frag");
 	pl::Texture2D container = pl::Texture2D("assets/textures/Texturelabs_Soil_134L.jpg", GL_LINEAR, GL_REPEAT);
+
+    std::vector<std::string> faces;
+    faces.push_back("/home/jmhi/Downloads/skybox/stars_right.png");
+    faces.push_back("/home/jmhi/Downloads/skybox/stars_left.png");
+    faces.push_back("/home/jmhi/Downloads/skybox/stars_top.png");
+    faces.push_back("/home/jmhi/Downloads/skybox/stars_bottom.png");
+    faces.push_back("/home/jmhi/Downloads/skybox/stars_front.png");
+    faces.push_back("/home/jmhi/Downloads/skybox/stars_back.png");
+    pl::Cubemap space = pl::Cubemap(faces);
 
 	glm::mat4 planetTransform = glm::mat4(1.0f);
 	//ptransform = glm::scale(ptransform, glm::vec3(planetTopology.minRadius));
@@ -149,8 +158,8 @@ int main() {
 
 		// planet
 		glEnable(GL_DEPTH_TEST);
-
 		planetShader.use();
+
 		planetShader.setLight(light);
 		planetShader.setVec3("viewPos", camera.getPosition());
 		planetShader.setMat4("projection", projection);
@@ -179,8 +188,8 @@ int main() {
 		// water
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		waterShader.use();
+
 		waterShader.setLight(waterLight);
 		waterShader.setVec3("viewPos", camera.getPosition());
 		waterShader.setMat4("projection", projection);
@@ -203,17 +212,19 @@ int main() {
 		water.Draw(planetShader);
 
 		//space
+        glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+glDepthMask(GL_FALSE);
 		spaceShader.use();
-		spaceShader.setLight(waterLight);
-		spaceShader.setVec3("viewPos", camera.getPosition());
+
 		spaceShader.setMat4("projection", projection);
-		spaceShader.setMat4("view", view);
-		spaceShader.setMat4("model", waterTransform);
+		spaceShader.setMat4("view", view = glm::mat4(glm::mat3(view)));
+		spaceShader.setInt("skybox", 0);
 
-		spaceShader.setVec3("waterColor", glm::vec3(0.0f, 0.0f, 0.0f));
-		spaceShader.setFloat("waterAlpha", 1.0f);
+		space.drawSkybox();
+glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LESS); // set depth function back to default
+        glEnable(GL_DEPTH_TEST);
 
-		space.Draw(spaceShader);
 
 #pragma region ImGui
 		ImGui_ImplGlfw_NewFrame();
