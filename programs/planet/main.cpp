@@ -106,8 +106,8 @@ int main() {
     std::vector<std::string> faces;
     faces.push_back("/home/jmhi/Downloads/skybox/stars_right.png");
     faces.push_back("/home/jmhi/Downloads/skybox/stars_left.png");
-    faces.push_back("/home/jmhi/Downloads/skybox/stars_top.png");
     faces.push_back("/home/jmhi/Downloads/skybox/stars_bottom.png");
+    faces.push_back("/home/jmhi/Downloads/skybox/stars_top.png");
     faces.push_back("/home/jmhi/Downloads/skybox/stars_front.png");
     faces.push_back("/home/jmhi/Downloads/skybox/stars_back.png");
     pl::Cubemap space = pl::Cubemap(faces);
