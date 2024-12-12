@@ -58,23 +58,27 @@ void main() {
 
   vec3 altitudeCol;
 
-  float waterDeep = -0.4;
-  vec3 waterDeepest = vec3(0.05,0.05,1.0);
-  vec3 waterLand = vec3(0.2,0.2,0.3);
-  vec3 sand = vec3(0.79, 0.74, 0.57);
-  float waterTransition = 0.1;
-  float sandTransition = 0.1;
 
   float nWaterLevel = radiusToNormalized(waterLevel);
 
-  layers[0] = Layer(waterDeep, waterDeepest);       // Water below sea
-  layers[1] = Layer(nWaterLevel-waterTransition, waterLand);        // Water at sea level
-  layers[2] = Layer(nWaterLevel, sand);        // Water at sea level
-  layers[3] = Layer(nWaterLevel+sandTransition, powColor(vec3(0.333, 0.419, 0.184), 0.005)*sand*vec3(0.133, 0.530, 0.133));  // Land
-  layers[4] = Layer(0.75, vec3(0.333, 0.419, 0.184));  // Land (more olive green)
-  layers[5] = Layer((0.8), vec3(0.345, 0.471, 0.074));  // Land (brownish)
-  layers[6] = Layer((0.85), vec3(0.933, 0.933, 0.933)); // Transition to snow
-  layers[7] = Layer((1.0), vec3(1.0, 1.0, 1.0));        // Snow 
+  Layer waterDeep = Layer(-0.4, vec3(0.05,0.05,1.0));
+  Layer waterShallow = Layer(nWaterLevel-0.1, vec3(0.2,0.2,0.3));
+  Layer sand = Layer(nWaterLevel, vec3(0.79,0.74,0.57));
+  Layer land1 = Layer(nWaterLevel+0.1, powColor(vec3(0.333, 0.419, 0.184), 0.005)*vec3(0.79,0.74,0.57)*vec3(0.133, 0.530, 0.133));
+  Layer land2 = Layer(0.75, vec3(0.333, 0.419, 0.184));   // Land (more olive green)
+  Layer land3 = Layer((0.8), vec3(0.345, 0.471, 0.074));  // Land (brownish)
+  Layer snow1 = Layer((0.85), vec3(0.933, 0.933, 0.933)); // Transition to snow
+  Layer snow2 = Layer((1.0), vec3(1.0, 1.0, 1.0));        // Snow
+
+  layers[0] = waterDeep;
+  layers[1] = waterShallow;
+  layers[2] = sand;
+  layers[3] = land1;
+  layers[4] = land2;
+  layers[5] = land3;
+  layers[6] = snow1;
+  layers[7] = snow2;
+
   altitudeCol = altitudeColor(NormalizedAltitude);
 
   vec3 litColor = litColor(grayColor*altitudeCol);

@@ -27,24 +27,19 @@ const int SCREEN_HEIGHT = 1080;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+float minRadius = 1.5f;
+float maxRadius = 2.5f;
+
 pl::Camera camera(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-void processInput(GLFWwindow* window, glm::mat4* model) {
-	float rotationSpeed = 2.0f * deltaTime;
-	glm::mat4 rotMatrix = glm::mat4(1.0f);
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(0.0f, 1.0f, 0.0f));
-	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(0.0f, -1.0f, 0.0f));
-	}
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(1.0f, 0.0f, 0.0f));
-	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(-1.0f, 0.0f, 0.0f));
-	}
-	*model = rotMatrix * (*model);
+void processInput(GLFWwindow* window, glm::mat4* model);
+
+float normalizedToRadius(float normalizedAltitude) {
+    return minRadius + normalizedAltitude * abs(maxRadius - minRadius);
+}
+
+float radiusToNormalized(float radius) {
+    return (radius - minRadius) / abs(maxRadius - minRadius);
 }
 
 int main() {
@@ -96,6 +91,17 @@ int main() {
 	waterLight.specularK = 1.0f;
 
 	pl::Planet planetTopology;
+
+    float nWaterLevel = radiusToNormalized(planetTopology.waterLevel);
+    std::cout << "HIHIHIHIHI" << normalizedToRadius(nWaterLevel) << std::endl;
+    std::cout << normalizedToRadius(-0.4) << std::endl;
+    std::cout << normalizedToRadius(nWaterLevel-0.1 ) << std::endl;
+    std::cout << normalizedToRadius(nWaterLevel ) << std::endl;
+    std::cout << normalizedToRadius(nWaterLevel+0.1 ) << std::endl;
+    std::cout << normalizedToRadius(0.75 ) << std::endl;
+    std::cout << normalizedToRadius(0.8 ) << std::endl;
+    std::cout << normalizedToRadius(0.85 ) << std::endl;
+    std::cout << normalizedToRadius(1.0 ) << std::endl;
 
 	pl::Mesh planet = pl::createSphere(1.0, 256);
 	pl::Mesh water = pl::createSphere(1.0, 256);
@@ -229,4 +235,23 @@ int main() {
 	}
 	printf("Shutting down...");
 }
+
+void processInput(GLFWwindow* window, glm::mat4* model) {
+	float rotationSpeed = 2.0f * deltaTime;
+	glm::mat4 rotMatrix = glm::mat4(1.0f);
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(0.0f, 1.0f, 0.0f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(0.0f, -1.0f, 0.0f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(1.0f, 0.0f, 0.0f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(-1.0f, 0.0f, 0.0f));
+	}
+	*model = rotMatrix * (*model);
+}
+
 

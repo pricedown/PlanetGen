@@ -9,6 +9,14 @@ struct Planet {
     float waterLevel = 2.0f; // scale of the water mesh
     float mountainFrequency = 3.0f;
     glm::vec3 seed = glm::vec3(0.0f, 0.0f, 0.0f);
+
+    float normalizedToRadius(float normalizedAltitude) {
+        return minRadius + normalizedAltitude * abs(maxRadius - minRadius);
+    }
+
+    float radiusToNormalized(float radius) {
+        return (radius - minRadius) / abs(maxRadius - minRadius);
+    }
 };
 
 } // namespace pl
