@@ -18,32 +18,34 @@ uniform float specularStrength;
 uniform float diffuseStrength;
 uniform float shininess;
 
+vec3 litColor(vec3 objectColor);
+
 void main() {
     vec3 objectColor = vec3(texture(tex,TexCoord));
+    vec3 litColor = litColor(objectColor);
 
-    vec3 norm = normalize(Normal);
-    vec3 lightDir = normalize(lightPos - FragPos);  
-    vec3 viewDir = normalize(viewPos - FragPos);
-    vec3 reflectDir = reflect(-lightDir, norm);  
-    vec3 halfwayDir = normalize(lightDir + viewDir);
+    FragColor = vec4(litColor, 1.0);
+}
 
-    vec3 ambient = ambientStrength * lightColor;
+vec3 litColor(vec3 objectColor) {
+  vec3 norm = normalize(Normal);
+  vec3 lightDir = normalize(lightPos - FragPos);  
+  vec3 viewDir = normalize(viewPos - FragPos);
+  vec3 reflectDir = reflect(-lightDir, norm);  
+  vec3 halfwayDir = normalize(lightDir + viewDir);
 
-    float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * lightColor * diffuseStrength;
+  vec3 ambient = ambientStrength * lightColor;
 
-    float spec = 0.0;
-    if (blinnPhong)
-    {
-        spec = pow(max(dot(norm, halfwayDir), 0.0), shininess);
-    }
-    else
-    {
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-    }
-    vec3 specular = lightColor * spec * specularStrength;
+  float diff = max(dot(norm, lightDir), 0.0);
+  vec3 diffuse = diff * lightColor * diffuseStrength;
 
-    vec3 result = (ambient + diffuse + specular) * objectColor;
-    FragColor = vec4(result, 1.0);
-    //FragColor = vec4(Normal,1.0);
+  float spec = 0.0;
+  if (blinnPhong)
+    spec = pow(max(dot(norm, halfwayDir), 0.0), shininess);
+  else
+    spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+  vec3 specular = lightColor * spec * specularStrength;
+
+  vec3 result = (ambient + diffuse + specular) * objectColor;
+  return result;
 }

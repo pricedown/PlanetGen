@@ -21,8 +21,8 @@ uniform float waveSpeed;
 
 void main() {
 	float height = waterLevel;
-	//float waveHeight = waveAmplitude * sin((waveFrequency * (aPos.x + aPos.y) + waveSpeed*time));
 	float waveHeight = 0.0;
+	// randomly overlapping waves
     waveHeight += waveAmplitude * sin((waveFrequency * (aPos.x + aPos.y) + waveSpeed * time));
     waveHeight += 0.5 * waveAmplitude * sin((2.0 * waveFrequency * (aPos.x + aPos.z) + waveSpeed * time));
     waveHeight += 0.3 * waveAmplitude * sin((0.5 * waveFrequency * (aPos.x - aPos.z) + waveSpeed * time));

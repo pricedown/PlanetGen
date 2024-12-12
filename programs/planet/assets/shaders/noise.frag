@@ -5,16 +5,14 @@
 in vec2 TexCoord;
 in vec3 Normal;  
 in vec3 FragPos;  
-in float NormalizedAltitude;
 in float Radius;
 
 out vec4 FragColor;
 
 uniform sampler2D tex;
 
-uniform vec3 viewPos;
-
 // lighting
+uniform vec3 viewPos;
 uniform bool blinnPhong;
 uniform vec3 lightColor;
 uniform vec3 lightPos;  
@@ -28,49 +26,36 @@ uniform float minRadius;
 uniform float maxRadius;
 uniform float waterLevel;
 
-// Treated as a ColorStop
-// https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_images/Using_CSS_gradients
-struct Layer {
-    float altitude; // normalized [0-1] from lowest depth to highest peak
+struct Layer { // treated like a ColorStop
+    float altitude; // relative to waterLevel
     vec3 color;
 };
-
-  uniform Layer waterDeep;
-  uniform Layer waterShallow;
-  uniform Layer sand;
-  uniform Layer land1;
-  uniform Layer land2;
-  uniform Layer land3;
-  uniform Layer snow1;
-  uniform Layer snow2;
-
-
 const int LAYER_COUNT = 8;
 Layer layers[LAYER_COUNT];
-vec3 altitudeColor(float altitude);
+
+uniform Layer waterDeep;
+uniform Layer waterShallow;
+uniform Layer sand;
+uniform Layer land1;
+uniform Layer land2;
+uniform Layer land3;
+uniform Layer snow1;
+uniform Layer snow2;
 
 vec3 powColor(vec3 color, float amount);
-
-float normalizedToRadius(float normalizedAltitude) {
-    return minRadius + normalizedAltitude * abs(maxRadius - minRadius);
-}
-
-float radiusToNormalized(float radius) {
-    return (radius - minRadius) / abs(maxRadius - minRadius);
-}
+float normalizedToRadius(float normalizedAltitude);
+float radiusToNormalized(float radius);
 
 vec3 litColor(vec3 objectColor);
 vec3 grayScale(vec3 color);
+
+vec3 altitudeColor(float altitude);
 
 void main() {
   vec3 objectColor = vec3(texture(tex,TexCoord));
   vec3 grayColor = grayScale(objectColor);
 
   vec3 altitudeCol;
-
-
-  float nWaterLevel = radiusToNormalized(waterLevel);
-
   layers[0] = waterDeep;
   layers[1] = waterShallow;
   layers[2] = sand;
@@ -79,16 +64,10 @@ void main() {
   layers[5] = land3;
   layers[6] = snow1;
   layers[7] = snow2;
-
-  altitudeCol = altitudeColor(Radius-waterLevel);
+  altitudeCol = altitudeColor(Radius-waterLevel); // makes values relative to waterLevel
 
   vec3 litColor = litColor(grayColor*altitudeCol);
-
   FragColor = vec4(litColor, 1.0);
-
-  // Debugs
-  //FragColor = vec4(result, 1.0);
-  //FragColor = vec4(Normal,1.0);
 }
 
 vec3 altitudeColor(float altitude) {
@@ -110,35 +89,7 @@ vec3 altitudeColor(float altitude) {
   return vec3(0.0);
 }
 
-// Second layer layout
-  /*
-  layers[0] = Layer(waterDeep, waterDeepest);       // Water below sea
-  layers[1] = Layer(normalizedWaterLevel-waterTransition, waterLand);        // Water at sea level
-  layers[2] = Layer(normalizedWaterLevel, sand);        // Water at sea level
-  layers[3] = Layer(normalizedWaterLevel+sandTransition, powColor(vec3(0.333, 0.419, 0.184), 0.005)*sand*vec3(0.133, 0.530, 0.133));  // Land
-  layers[4] = Layer(0.75, vec3(0.333, 0.419, 0.184));  // Land (more olive green)
-  layers[5] = Layer(0.8, vec3(0.345, 0.471, 0.074));  // Land (brownish)
-  layers[6] = Layer(0.85, vec3(0.933, 0.933, 0.933)); // Transition to snow
-  layers[7] = Layer(1.0, vec3(1.0, 1.0, 1.0));        // Snow 
-  */
-
-
-// First layer layout
-  /*
-  vec3 sand = vec3(0.79, 0.74, 0.57);
-  vec3 land = vec3(0.133, 0.545, 0.133);
-  vec3 altitudeCol;
-  layers[0] = Layer(-10.0, vec3(0.0, 0.0, 1.0));       // Water below sea
-  layers[1] = Layer(normalizedWaterLevel-0.1, vec3(0.0,0.0,0.2f));        // Water at sea level
-  layers[2] = Layer(normalizedWaterLevel, sand);  // Land
-  layers[3] = Layer(normalizedWaterLevel+0.1, land);  // Land
-  layers[4] = Layer(0.7, vec3(0.333, 0.419, 0.184));  // Land (more olive green)
-  layers[5] = Layer(0.8, vec3(0.345, 0.471, 0.074));  // Land (brownish)
-  layers[6] = Layer(0.85, vec3(0.933, 0.933, 0.933)); // Transition to snow
-  layers[7] = Layer(1.0, vec3(1.0, 1.0, 1.0));        // Snow 
-  altitudeCol = altitudeColor(NormalizedAltitude);
-  */
-
+// uses either blinn-phong or phong
 vec3 litColor(vec3 objectColor) {
   vec3 norm = normalize(Normal);
   vec3 lightDir = normalize(lightPos - FragPos);  
@@ -172,4 +123,12 @@ vec3 powColor(vec3 color, float amount) {
     color.g = pow(color.g, amount);
     color.b = pow(color.b, amount);
     return color;
+}
+
+float normalizedToRadius(float normalizedAltitude) {
+    return minRadius + normalizedAltitude * abs(maxRadius - minRadius);
+}
+
+float radiusToNormalized(float radius) {
+    return (radius - minRadius) / abs(maxRadius - minRadius);
 }

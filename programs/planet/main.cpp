@@ -251,28 +251,28 @@ int main() {
 
 		ImGui::Begin("Layers");
 		ImGui::Text("Water Deep");
-		ImGui::SliderFloat("Water deep altitude", &waterDeep.altitude, -1.0f, 6.0f);
+		ImGui::SliderFloat("Water deep altitude", &waterDeep.altitude, -1.0f, 3.0f);
 		ImGui::ColorEdit3("Water deep color", &waterDeep.color.r);
 		ImGui::Text("Water Shallow");
-		ImGui::SliderFloat("Water shallow altitude", &waterShallow.altitude, -1.0f, 6.0f);
+		ImGui::SliderFloat("Water shallow altitude", &waterShallow.altitude, -1.0f, 3.0f);
 		ImGui::ColorEdit3("Water shallow color", &waterShallow.color.r);
 		ImGui::Text("Sand");
-		ImGui::SliderFloat("Sand altitude", &sand.altitude, -1.0f, 6.0f);
+		ImGui::SliderFloat("Sand altitude", &sand.altitude, -1.0f, 3.0f);
 		ImGui::ColorEdit3("Sand color", &sand.color.r);
 		ImGui::Text("Land 1");
-		ImGui::SliderFloat("Land1 altitude", &land1.altitude, -1.0f, 6.0f);
-		ImGui::ColorEdit3("Land2 color", &land1.color.r);
+		ImGui::SliderFloat("Land1 altitude", &land1.altitude, -1.0f, 3.0f);
+		ImGui::ColorEdit3("Land1 color", &land1.color.r);
 		ImGui::Text("Land 2");
-		ImGui::SliderFloat("Land2 altitude", &land2.altitude, -1.0f, 6.0f);
+		ImGui::SliderFloat("Land2 altitude", &land2.altitude, -1.0f, 3.0f);
 		ImGui::ColorEdit3("Land2 color", &land2.color.r);
 		ImGui::Text("Land 3");
-		ImGui::SliderFloat("Land3 altitude", &land3.altitude, -1.0f, 6.0f);
+		ImGui::SliderFloat("Land3 altitude", &land3.altitude, -1.0f, 3.0f);
 		ImGui::ColorEdit3("Land3 color", &land3.color.r);
 		ImGui::Text("Snow 1");
-		ImGui::SliderFloat("Snow1 altitude", &snow1.altitude, -1.0f, 6.0f);
+		ImGui::SliderFloat("Snow1 altitude", &snow1.altitude, -1.0f, 3.0f);
 		ImGui::ColorEdit3("Snow1 color", &snow1.color.r);
 		ImGui::Text("Snow 2");
-		ImGui::SliderFloat("Snow 2 altitude", &snow2.altitude, -1.0f, 6.0f);
+		ImGui::SliderFloat("Snow 2 altitude", &snow2.altitude, -1.0f, 3.0f);
 		ImGui::ColorEdit3("Snow 2 color", &snow2.color.r);
 		ImGui::End();
 

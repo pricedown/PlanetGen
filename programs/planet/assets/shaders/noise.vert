@@ -10,7 +10,6 @@ out vec2 TexCoord;
 out vec3 Normal;
 out vec3 FragPos;
 out float Radius;
-out float NormalizedAltitude; // [0-1] from lowest depth to highest peak
 
 uniform float uTime;
 uniform mat4 model;
@@ -45,8 +44,6 @@ void main()
     float noise = Pseudo3dNoise((aPos + seed) * frequency);
     float normalizedHills = pow(noise, mountainRoughness);
     float hills = normalizedHills * mountainHeight;
-
-    NormalizedAltitude = normalizedHills;
     
     Radius = minRadius + hills;
     vec3 pos = (Radius * aNormal);

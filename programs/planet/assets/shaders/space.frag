@@ -23,9 +23,17 @@ uniform float shininess;
 uniform float waterAlpha;
 uniform vec3 waterColor;
 
+vec3 litColor(vec3 objectColor);
+
 void main() {
     vec3 objectColor = vec3(texture(tex,TexCoord));
 
+    vec3 litColor = litColor(objectColor);
+
+    FragColor = vec4(litColor, waterAlpha);
+}
+
+vec3 litColor(vec3 objectColor) {
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(lightPos - FragPos);  
     vec3 viewDir = normalize(viewPos - FragPos);
@@ -48,6 +56,5 @@ void main() {
     }
     vec3 specular = waterColor * lightColor * spec * specularStrength;
 
-    vec3 result = (ambient + diffuse + specular) * waterColor;
-    FragColor = vec4(result, waterAlpha);
+    return (ambient + diffuse + specular) * waterColor;
 }
