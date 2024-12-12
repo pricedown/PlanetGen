@@ -125,6 +125,9 @@ int main() {
 	pl::Layer snow1 = pl::Layer(snow1_level, glm::vec3(0.933, 0.933, 0.933)); // Transition to snow
 	pl::Layer snow2 = pl::Layer(snow2_level, glm::vec3(1.0, 1.0, 1.0));        // Snow
 
+	glm::mat4 transform = glm::mat4(1.0f);
+	//transform = glm::scale(transform, glm::vec3(planetTopology.waterLevel));
+
 	while (!glfwWindowShouldClose(window)) {
 		// Inputs
 		glfwPollEvents();
@@ -198,8 +201,6 @@ int main() {
 		waterShader.setVec3("viewPos", camera.getPosition());
 		waterShader.setMat4("projection", projection);
 		waterShader.setMat4("view", view);
-		glm::mat4 transform = glm::mat4(1.0f);
-		//transform = glm::scale(transform, glm::vec3(planetTopology.waterLevel));
 		waterShader.setMat4("model", transform);
 
 		waterShader.setVec3("waterColor", waterColor);
@@ -213,6 +214,8 @@ int main() {
 
 		waterShader.setFloat("rimLightIntensity", rimLightIntensity);
 		waterShader.setFloat("rimLightShininess", rimLightShininess);
+
+		processInput(window, &transform);
 
 		container.Bind(GL_TEXTURE0);
 		water.Draw(planetShader);
