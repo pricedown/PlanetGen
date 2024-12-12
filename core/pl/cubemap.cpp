@@ -16,8 +16,6 @@ namespace pl {
         {
             unsigned char *data = stbi_load(faces[i].c_str(), &width, &height, &nrComponents, 0);
 
-            std::cout << faces[i] << std::endl;
-
             unsigned int channelType;
             if (nrComponents == 3) {
                 channelType = GL_RGB;

@@ -104,12 +104,12 @@ int main() {
 	pl::Texture2D container = pl::Texture2D("assets/textures/Texturelabs_Soil_134L.jpg", GL_LINEAR, GL_REPEAT);
 
     std::vector<std::string> faces;
-    faces.push_back("/home/jmhi/Downloads/skybox/stars_right.png");
-    faces.push_back("/home/jmhi/Downloads/skybox/stars_left.png");
-    faces.push_back("/home/jmhi/Downloads/skybox/stars_bottom.png");
-    faces.push_back("/home/jmhi/Downloads/skybox/stars_top.png");
-    faces.push_back("/home/jmhi/Downloads/skybox/stars_front.png");
-    faces.push_back("/home/jmhi/Downloads/skybox/stars_back.png");
+    faces.push_back("assets/textures/skybox/right.png");
+    faces.push_back("assets/textures/skybox/left.png");
+    faces.push_back("assets/textures/skybox/bottom.png");
+    faces.push_back("assets/textures/skybox/top.png");
+    faces.push_back("assets/textures/skybox/front.png");
+    faces.push_back("assets/textures/skybox/back.png");
     pl::Cubemap space = pl::Cubemap(faces);
 
 	glm::mat4 planetTransform = glm::mat4(1.0f);
