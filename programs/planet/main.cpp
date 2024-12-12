@@ -66,17 +66,15 @@ int main() {
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); //Unlocks mouse
 #pragma endregion
 #pragma region Geometry data
-	pl::Mesh boxMesh(pl::cubeVertices, sizeof(pl::cubeVertices));
+	pl::Mesh planet = pl::createSphere(1.0, 256);
+	pl::Mesh water = pl::createSphere(1.0, 256);
+
+	pl::Mesh slight = pl::createSphere(1, 64);
+	pl::Mesh space = pl::createSphere(128.0, 256);
 #pragma endregion
 #pragma region World
-	pl::initCubes();
-#pragma endregion
-
-	pl::Shader planetShader = pl::Shader("assets/shaders/noise.vert", "assets/shaders/noise.frag");
-	pl::Shader waterShader = pl::Shader("assets/shaders/water.vert", "assets/shaders/water.frag");
-	pl::Shader lightShader = pl::Shader("assets/shaders/light.vert", "assets/shaders/light.frag");
-	pl::Shader spaceShader = pl::Shader("assets/shaders/space.vert", "assets/shaders/space.frag");
-	pl::Texture2D container = pl::Texture2D("assets/textures/Texturelabs_Soil_134L.jpg", GL_LINEAR, GL_REPEAT);
+	pl::Planet planetTopology;
+	pl::Waves waves;
 
 	pl::Light light;
 	light.pos = glm::vec3(0.0f, 0.0f, 4.0f);
@@ -86,27 +84,12 @@ int main() {
 	pl::Light waterLight;
 	waterLight.pos = glm::vec3(0.0f, 0.0f, 4.0f);
 	waterLight.specularK = 1.0f;
-
-	pl::Planet planetTopology;
-
-	pl::Waves waves;
-
-	pl::Mesh planet = pl::createSphere(1.0, 256);
-	pl::Mesh water = pl::createSphere(1.0, 256);
+	glm::vec3 waterColor = glm::vec3(0.1, 0.1, 0.41);
 	float rimLightIntensity = 0.87f;
 	float rimLightShininess = 1.5f;
-	glm::vec3 waterColor = glm::vec3(0.1, 0.1, 0.41);
-
-	pl::Mesh slight = pl::createSphere(1, 64);
-	pl::Mesh space = pl::createSphere(128.0, 256);
-
-	glm::mat4 ptransform = glm::mat4(1.0f);
-	//ptransform = glm::scale(ptransform, glm::vec3(planetTopology.minRadius));
-
-	glm::vec3 waterDeepest = glm::vec3(0.05, 0.05, 1.0);
-	glm::vec3 waterLand = glm::vec3(0.2, 0.2, 0.3);
 
 	// planet layers
+	/*
 	float waterDeep_level = -0.9;
 	float waterShallow_level = -0.1;
 	float sand_level = 0;
@@ -115,15 +98,27 @@ int main() {
 	float land3_level = 0.3;
 	float snow1_level = 0.35;
 	float snow2_level = 0.5;
+	*/
 
-	pl::Layer waterDeep = pl::Layer(waterDeep_level, glm::vec3(0.05, 0.05, 1.0));
-	pl::Layer waterShallow = pl::Layer(waterShallow_level, glm::vec3(0.2, 0.2, 0.3));
-	pl::Layer sand = pl::Layer(sand_level, glm::vec3(0.79, 0.74, 0.57));
-	pl::Layer land1 = pl::Layer(land1_level, powColor(glm::vec3(0.333, 0.419, 0.184), 0.005) * glm::vec3(0.79, 0.74, 0.57) * glm::vec3(0.133, 0.530, 0.133));
-	pl::Layer land2 = pl::Layer(land2_level, glm::vec3(0.333, 0.419, 0.184));   // Land (more olive green)
-	pl::Layer land3 = pl::Layer(land3_level, glm::vec3(0.345, 0.471, 0.074));  // Land (brownish)
-	pl::Layer snow1 = pl::Layer(snow1_level, glm::vec3(0.933, 0.933, 0.933)); // Transition to snow
-	pl::Layer snow2 = pl::Layer(snow2_level, glm::vec3(1.0, 1.0, 1.0));        // Snow
+	pl::Layer waterDeep = pl::Layer(-0.9, glm::vec3(0.05, 0.05, 1.0));
+	pl::Layer waterShallow = pl::Layer(-0.1, glm::vec3(0.2, 0.2, 0.3));
+	pl::Layer sand = pl::Layer(0, glm::vec3(0.79, 0.74, 0.57));
+	pl::Layer land1 = pl::Layer(0.1, powColor(glm::vec3(0.333, 0.419, 0.184), 0.005) * glm::vec3(0.79, 0.74, 0.57) * glm::vec3(0.133, 0.530, 0.133));
+	pl::Layer land2 = pl::Layer(0.25, glm::vec3(0.333, 0.419, 0.184));   // Land (more olive green)
+	pl::Layer land3 = pl::Layer(0.3, glm::vec3(0.345, 0.471, 0.074));  // Land (brownish)
+	pl::Layer snow1 = pl::Layer(0.35, glm::vec3(0.933, 0.933, 0.933)); // Transition to snow
+	pl::Layer snow2 = pl::Layer(0.5, glm::vec3(1.0, 1.0, 1.0));        // Snow
+#pragma endregion
+
+	pl::Shader planetShader = pl::Shader("assets/shaders/noise.vert", "assets/shaders/noise.frag");
+	pl::Shader waterShader = pl::Shader("assets/shaders/water.vert", "assets/shaders/water.frag");
+	pl::Shader lightShader = pl::Shader("assets/shaders/light.vert", "assets/shaders/light.frag");
+	pl::Shader spaceShader = pl::Shader("assets/shaders/space.vert", "assets/shaders/space.frag");
+	pl::Texture2D container = pl::Texture2D("assets/textures/Texturelabs_Soil_134L.jpg", GL_LINEAR, GL_REPEAT);
+
+	glm::mat4 ptransform = glm::mat4(1.0f);
+	//ptransform = glm::scale(ptransform, glm::vec3(planetTopology.minRadius));
+
 
 	glm::mat4 transform = glm::mat4(1.0f);
 	//transform = glm::scale(transform, glm::vec3(planetTopology.waterLevel));

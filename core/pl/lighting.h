@@ -8,4 +8,4 @@ namespace pl {
 		float shininess = 18.0f;
 		bool blinnPhong = true;
 	};
-};
+} // namespace pl

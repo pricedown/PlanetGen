@@ -1,3 +1,5 @@
+// Joseph Isaacs
+
 #pragma once
 
 #include "../ew/external/glad.h"
@@ -23,12 +25,8 @@ namespace pl {
 		glm::vec3 norm = glm::vec3(0);
 		glm::vec2 uv = glm::vec2(0);
 
-		Vertex() {
-
-		}
-		Vertex(const glm::vec3& pos, const glm::vec3& normal, const glm::vec2& uv) :
-			pos(pos), norm(normal), uv(uv) {
-		}
+		Vertex() = default;
+		Vertex(const glm::vec3& pos, const glm::vec3& normal, const glm::vec2& uv);
 	};
 	
 	struct Texture {
@@ -57,4 +55,4 @@ namespace pl {
 		void setupVAOEBO();
 		void setupVAO();
 	};
-};
+} // namespace pl
