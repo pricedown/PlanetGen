@@ -14,6 +14,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "../pl/lighting.h"
+#include "../pl/planet.h"
 
 namespace pl {
 	class Shader {
@@ -28,6 +29,7 @@ namespace pl {
 		void setVec3(const std::string& name, const glm::vec3& value) const;
 		void setMat4(const std::string& name, const glm::mat4& mat) const;
 		void setLight(const pl::Light& light) const;
+		void setLayer(const std::string& name, const pl::Layer& layer) const;
 	};
 	#endif
 }

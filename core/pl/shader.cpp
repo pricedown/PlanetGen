@@ -107,3 +107,8 @@ void Shader::setLight(const pl::Light& light) const {
   setFloat("shininess", light.shininess);
   setBool("blinnPhong", light.blinnPhong);
 }
+void Shader::setLayer(const std::string& name, const pl::Layer& layer) const {
+  setFloat(name+".altitude", layer.altitude);
+  setVec3(name+".color", layer.color);
+}
+

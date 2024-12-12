@@ -1,3 +1,5 @@
+#pragma once
+
 #include <glm/glm.hpp>
 
 namespace pl {
@@ -16,6 +18,18 @@ struct Planet {
 
     float radiusToNormalized(float radius) {
         return (radius - minRadius) / abs(maxRadius - minRadius);
+    }
+};
+
+// Treated as a ColorStop
+// https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_images/Using_CSS_gradients
+struct Layer {
+    float altitude; // normalized [0-1] from lowest depth to highest peak
+    glm::vec3 color;
+
+    Layer(float altitude, glm::vec3 color) {
+        this->altitude = altitude;
+        this->color = color;
     }
 };
 

@@ -35,8 +35,15 @@ struct Layer {
     vec3 color;
 };
 
-// planet layers
-//uniform Layer 
+  uniform Layer waterDeep;
+  uniform Layer waterShallow;
+  uniform Layer sand;
+  uniform Layer land1;
+  uniform Layer land2;
+  uniform Layer land3;
+  uniform Layer snow1;
+  uniform Layer snow2;
+
 
 const int LAYER_COUNT = 8;
 Layer layers[LAYER_COUNT];
@@ -64,6 +71,7 @@ void main() {
 
   float nWaterLevel = radiusToNormalized(waterLevel);
 
+  /*
   float waterDeep_level = waterLevel - 0.9;
   float waterShallow_level = waterLevel - 0.1;
   float sand_level = waterLevel;
@@ -81,6 +89,7 @@ void main() {
   Layer land3 = Layer(land3_level, vec3(0.345, 0.471, 0.074));  // Land (brownish)
   Layer snow1 = Layer(snow1_level, vec3(0.933, 0.933, 0.933)); // Transition to snow
   Layer snow2 = Layer(snow2_level, vec3(1.0, 1.0, 1.0));        // Snow
+  */
 
   layers[0] = waterDeep;
   layers[1] = waterShallow;
@@ -91,7 +100,7 @@ void main() {
   layers[6] = snow1;
   layers[7] = snow2;
 
-  altitudeCol = altitudeColor(Radius);
+  altitudeCol = altitudeColor(Radius+2-waterLevel);
 
   vec3 litColor = litColor(grayColor*altitudeCol);
 
