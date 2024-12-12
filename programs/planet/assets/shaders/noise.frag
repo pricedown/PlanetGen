@@ -47,13 +47,12 @@ float normalizedToRadius(float normalizedAltitude);
 float radiusToNormalized(float radius);
 
 vec3 litColor(vec3 objectColor);
-vec3 grayScale(vec3 color);
+float grayScale(vec3 color);
 
 vec3 altitudeColor(float altitude);
 
 void main() {
   vec3 objectColor = vec3(texture(tex,TexCoord));
-  vec3 grayColor = grayScale(objectColor);
 
   vec3 altitudeCol;
   layers[0] = waterDeep;
@@ -66,7 +65,7 @@ void main() {
   layers[7] = snow2;
   altitudeCol = altitudeColor(Radius-waterLevel); // makes values relative to waterLevel
 
-  vec3 litColor = litColor(grayColor*altitudeCol);
+  vec3 litColor = litColor(grayScale(objectColor) * altitudeCol);
   FragColor = vec4(litColor, 1.0);
 }
 
@@ -113,9 +112,9 @@ vec3 litColor(vec3 objectColor) {
   return result;
 }
 
-vec3 grayScale(vec3 color) {
+float grayScale(vec3 color) {
   vec3 grayScale = vec3(0.2126, 0.7152, 0.0722);
-  return color * dot(color,grayScale);
+  return dot(color,grayScale);
 }
 
 vec3 powColor(vec3 color, float amount) {
