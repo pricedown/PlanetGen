@@ -22,7 +22,6 @@ struct Planet {
 };
 
 // Treated like a ColorStop in shaders
-// https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_images/Using_CSS_gradients
 struct Layer {
     float altitude; // real scale relative to water radius
     glm::vec3 color;

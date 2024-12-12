@@ -28,19 +28,14 @@ const int SCREEN_HEIGHT = 1080;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-float minRadius = 1.5f;
-float maxRadius = 2.5f;
-
-pl::Camera camera(SCREEN_WIDTH, SCREEN_HEIGHT);
-
 void processInput(GLFWwindow* window, glm::mat4* model);
 
 glm::vec3 powColor(glm::vec3 color, float amount);
 
 int main() {
+#pragma region Initialization
 	srand(time(NULL));
 
-#pragma region Initialization
 	printf("Initializing...");
 	GLFWwindow* window;
 	if (!glfwInit()) {
@@ -65,6 +60,7 @@ int main() {
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); //Unlocks mouse
 #pragma endregion
+
 #pragma region Geometry data
 	pl::Mesh planet = pl::createSphere(1.0, 256);
 	pl::Mesh water = pl::createSphere(1.0, 256);
@@ -72,7 +68,10 @@ int main() {
 	pl::Mesh slight = pl::createSphere(1, 64);
 	pl::Mesh space = pl::createSphere(128.0, 256);
 #pragma endregion
+
 #pragma region World
+	pl::Camera camera(SCREEN_WIDTH, SCREEN_HEIGHT);
+
 	pl::Planet planetTopology;
 	pl::Waves waves;
 
@@ -85,20 +84,8 @@ int main() {
 	waterLight.pos = glm::vec3(0.0f, 0.0f, 4.0f);
 	waterLight.specularK = 1.0f;
 	glm::vec3 waterColor = glm::vec3(0.1, 0.1, 0.41);
-	float rimLightIntensity = 0.87f;
-	float rimLightShininess = 1.5f;
-
-	// planet layers
-	/*
-	float waterDeep_level = -0.9;
-	float waterShallow_level = -0.1;
-	float sand_level = 0;
-	float land1_level = 0.1;
-	float land2_level = 0.25;
-	float land3_level = 0.3;
-	float snow1_level = 0.35;
-	float snow2_level = 0.5;
-	*/
+	float rimLightIntensity = 1.4f;
+	float rimLightShininess = 0.6f;
 
 	pl::Layer waterDeep = pl::Layer(-0.9, glm::vec3(0.05, 0.05, 1.0));
 	pl::Layer waterShallow = pl::Layer(-0.1, glm::vec3(0.2, 0.2, 0.3));
@@ -116,11 +103,10 @@ int main() {
 	pl::Shader spaceShader = pl::Shader("assets/shaders/space.vert", "assets/shaders/space.frag");
 	pl::Texture2D container = pl::Texture2D("assets/textures/Texturelabs_Soil_134L.jpg", GL_LINEAR, GL_REPEAT);
 
-	glm::mat4 ptransform = glm::mat4(1.0f);
+	glm::mat4 planetTransform = glm::mat4(1.0f);
 	//ptransform = glm::scale(ptransform, glm::vec3(planetTopology.minRadius));
 
-
-	glm::mat4 transform = glm::mat4(1.0f);
+	glm::mat4 waterTransform = glm::mat4(1.0f);
 	//transform = glm::scale(transform, glm::vec3(planetTopology.waterLevel));
 
 	while (!glfwWindowShouldClose(window)) {
@@ -132,11 +118,14 @@ int main() {
 		deltaTime = time - lastFrame;
 		lastFrame = time;
 
-		camera.use(window);
+		camera.use(window); 
 		camera.timeChange(time);
 
 		glm::mat4 projection = camera.projection();
 		glm::mat4 view = camera.viewLookAt();
+
+		processInput(window, &planetTransform);
+		processInput(window, &waterTransform);
 
 		// Draw
 		// background
@@ -151,6 +140,7 @@ int main() {
 		lightShader.setMat4("projection", projection);
 		lightShader.setMat4("view", view);
 		lightShader.setMat4("model", lightModel);
+		
 		lightShader.setVec3("lightPos", light.pos);
 		lightShader.setVec3("lightColor", light.color);
 		lightShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
@@ -164,8 +154,7 @@ int main() {
 		planetShader.setVec3("viewPos", camera.getPosition());
 		planetShader.setMat4("projection", projection);
 		planetShader.setMat4("view", view);
-		processInput(window, &ptransform);
-		planetShader.setMat4("model", ptransform);
+		planetShader.setMat4("model", planetTransform);
 
 		planetShader.setFloat("minRadius", planetTopology.minRadius);
 		planetShader.setFloat("maxRadius", planetTopology.maxRadius);
@@ -174,7 +163,6 @@ int main() {
 		planetShader.setFloat("frequency", planetTopology.mountainFrequency);
 		planetShader.setVec3("seed", planetTopology.seed);
 
-		// layers
 		planetShader.setLayer("waterDeep", waterDeep);
 		planetShader.setLayer("waterShallow", waterShallow);
 		planetShader.setLayer("sand", sand);
@@ -196,7 +184,7 @@ int main() {
 		waterShader.setVec3("viewPos", camera.getPosition());
 		waterShader.setMat4("projection", projection);
 		waterShader.setMat4("view", view);
-		waterShader.setMat4("model", transform);
+		waterShader.setMat4("model", waterTransform);
 
 		waterShader.setVec3("waterColor", waterColor);
 		waterShader.setFloat("waterLevel", planetTopology.waterLevel);
@@ -210,8 +198,6 @@ int main() {
 		waterShader.setFloat("rimLightIntensity", rimLightIntensity);
 		waterShader.setFloat("rimLightShininess", rimLightShininess);
 
-		processInput(window, &transform);
-
 		container.Bind(GL_TEXTURE0);
 		water.Draw(planetShader);
 
@@ -221,11 +207,10 @@ int main() {
 		spaceShader.setVec3("viewPos", camera.getPosition());
 		spaceShader.setMat4("projection", projection);
 		spaceShader.setMat4("view", view);
-		spaceShader.setMat4("model", transform);
+		spaceShader.setMat4("model", waterTransform);
 
 		spaceShader.setVec3("waterColor", glm::vec3(0.0f, 0.0f, 0.0f));
 		spaceShader.setFloat("waterAlpha", 1.0f);
-
 
 		space.Draw(spaceShader);
 
@@ -300,6 +285,7 @@ int main() {
 	printf("Shutting down...");
 }
 
+// Caleb Carreon
 void processInput(GLFWwindow* window, glm::mat4* model) {
 	float rotationSpeed = 2.0f * deltaTime;
 	glm::mat4 rotMatrix = glm::mat4(1.0f);
@@ -318,6 +304,7 @@ void processInput(GLFWwindow* window, glm::mat4* model) {
 	*model = rotMatrix * (*model);
 }
 
+// Joseph Isaacs
 glm::vec3 powColor(glm::vec3 color, float amount) {
 	color.r = pow(color.r, amount);
 	color.g = pow(color.g, amount);

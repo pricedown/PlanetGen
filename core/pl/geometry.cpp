@@ -1,3 +1,5 @@
+// Jonathan Ingles
+
 #include "geometry.h"
 
 namespace pl {
@@ -16,8 +18,8 @@ namespace pl {
 			{
 				float theta = col * thetaStep;
 				glm::vec2 uv;
-				uv.x = 1.0 - ((float)col / subDivisions);
-				uv.y = 1.0 - ((float)row / subDivisions);
+				uv.x = 1.0f - ((float)col / subDivisions);
+				uv.y = 1.0f - ((float)row / subDivisions);
 				glm::vec3 pos;
 				pos.x = cosf(theta) * sinf(phi) * radius;
 				pos.y = cosf(phi) * radius;
@@ -32,7 +34,7 @@ namespace pl {
 		{
 			for (size_t col = 0; col < subDivisions; col++)
 			{
-				unsigned int bl = row * (subDivisions + 1) + col;
+				unsigned int bl = static_cast<unsigned int>(row * (subDivisions + 1) + col);
 				unsigned int br = bl + 1;
 				unsigned int tl = bl + subDivisions + 1;
 				unsigned int tr = tl + 1;
