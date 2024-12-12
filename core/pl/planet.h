@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include "../ew/ewMath/ewMath.h"
 
 namespace pl {
 
@@ -18,6 +19,12 @@ struct Planet {
 
     float radiusToNormalized(float radius) {
         return (radius - minRadius) / abs(maxRadius - minRadius);
+    }
+
+    void randomizeSeed() {
+        seed.x = ew::RandomRange(-10000, 10000);
+        seed.y = ew::RandomRange(-10000, 10000);
+        seed.z = ew::RandomRange(-10000, 10000);
     }
 };
 

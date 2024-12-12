@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <iostream>
+#include <random>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -34,17 +35,11 @@ pl::Camera camera(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 void processInput(GLFWwindow* window, glm::mat4* model);
 
-float normalizedToRadius(float normalizedAltitude) {
-	return minRadius + normalizedAltitude * abs(maxRadius - minRadius);
-}
-
-float radiusToNormalized(float radius) {
-	return (radius - minRadius) / abs(maxRadius - minRadius);
-}
-
 glm::vec3 powColor(glm::vec3 color, float amount);
 
 int main() {
+	srand(time(NULL));
+
 #pragma region Initialization
 	printf("Initializing...");
 	GLFWwindow* window;
@@ -250,6 +245,8 @@ int main() {
 		ImGui::SliderFloat("Water Level", &planetTopology.waterLevel, 0.05f, 7.0f);
 		ImGui::SliderFloat("Mountain Frequency", &planetTopology.mountainFrequency, 0.05f, 15.0f);
 		ImGui::DragFloat3("Seed", &planetTopology.seed.x, 0.1f);
+		if (ImGui::Button("Randomize Seed"))
+			planetTopology.randomizeSeed();
 		ImGui::End();
 
 		ImGui::Begin("Layers");
