@@ -35,11 +35,11 @@ pl::Camera camera(SCREEN_WIDTH, SCREEN_HEIGHT);
 void processInput(GLFWwindow* window, glm::mat4* model);
 
 float normalizedToRadius(float normalizedAltitude) {
-    return minRadius + normalizedAltitude * abs(maxRadius - minRadius);
+	return minRadius + normalizedAltitude * abs(maxRadius - minRadius);
 }
 
 float radiusToNormalized(float radius) {
-    return (radius - minRadius) / abs(maxRadius - minRadius);
+	return (radius - minRadius) / abs(maxRadius - minRadius);
 }
 
 glm::vec3 powColor(glm::vec3 color, float amount);
@@ -94,17 +94,6 @@ int main() {
 
 	pl::Planet planetTopology;
 
-    float nWaterLevel = radiusToNormalized(planetTopology.waterLevel);
-    std::cout << "HIHIHIHIHI" << normalizedToRadius(nWaterLevel) << std::endl;
-    std::cout << normalizedToRadius(-0.4) << std::endl;
-    std::cout << normalizedToRadius(nWaterLevel-0.1 ) << std::endl;
-    std::cout << normalizedToRadius(nWaterLevel ) << std::endl;
-    std::cout << normalizedToRadius(nWaterLevel+0.1 ) << std::endl;
-    std::cout << normalizedToRadius(0.75 ) << std::endl;
-    std::cout << normalizedToRadius(0.8 ) << std::endl;
-    std::cout << normalizedToRadius(0.85 ) << std::endl;
-    std::cout << normalizedToRadius(1.0 ) << std::endl;
-
 	pl::Mesh planet = pl::createSphere(1.0, 256);
 	pl::Mesh water = pl::createSphere(1.0, 256);
 
@@ -114,32 +103,32 @@ int main() {
 	glm::mat4 ptransform = glm::mat4(1.0f);
 	//ptransform = glm::scale(ptransform, glm::vec3(planetTopology.minRadius));
 
-	glm::vec3 waterDeepest = glm::vec3(0.05,0.05,1.0);
-	glm::vec3 waterLand = glm::vec3(0.2,0.2,0.3);
+	glm::vec3 waterDeepest = glm::vec3(0.05, 0.05, 1.0);
+	glm::vec3 waterLand = glm::vec3(0.2, 0.2, 0.3);
 
-struct Layer {
-    float altitude; // normalized [0-1] from lowest depth to highest peak
-    glm::vec3 color;
-};
+	struct Layer {
+		float altitude; // normalized [0-1] from lowest depth to highest peak
+		glm::vec3 color;
+	};
 
-// planet layers
-  float waterDeep_level = planetTopology.waterLevel - 0.9;
-  float waterShallow_level = planetTopology.waterLevel - 0.1;
-  float sand_level = planetTopology.waterLevel;
-  float land1_level = planetTopology.waterLevel + 0.1;
-  float land2_level = planetTopology.waterLevel + 0.25;
-  float land3_level = planetTopology.waterLevel + 0.3;
-  float snow1_level = planetTopology.waterLevel + 0.35;
-  float snow2_level = planetTopology.waterLevel + 0.5;
+	// planet layers
+	float waterDeep_level = -0.9;
+	float waterShallow_level = -0.1;
+	float sand_level = 0;
+	float land1_level = 0.1;
+	float land2_level = 0.25;
+	float land3_level = 0.3;
+	float snow1_level = 0.35;
+	float snow2_level = 0.5;
 
-  pl::Layer waterDeep = pl::Layer(waterDeep_level, glm::vec3(0.05,0.05,1.0));
-  pl::Layer waterShallow = pl::Layer(waterShallow_level, glm::vec3(0.2,0.2,0.3));
-  pl::Layer sand = pl::Layer(sand_level, glm::vec3(0.79,0.74,0.57));
-  pl::Layer land1 = pl::Layer(land1_level, powColor(glm::vec3(0.333, 0.419, 0.184), 0.005)*glm::vec3(0.79,0.74,0.57)*glm::vec3(0.133, 0.530, 0.133));
-  pl::Layer land2 = pl::Layer(land2_level, glm::vec3(0.333, 0.419, 0.184));   // Land (more olive green)
-  pl::Layer land3 = pl::Layer(land3_level, glm::vec3(0.345, 0.471, 0.074));  // Land (brownish)
-  pl::Layer snow1 = pl::Layer(snow1_level, glm::vec3(0.933, 0.933, 0.933)); // Transition to snow
-  pl::Layer snow2 = pl::Layer(snow2_level, glm::vec3(1.0, 1.0, 1.0));        // Snow
+	pl::Layer waterDeep = pl::Layer(waterDeep_level, glm::vec3(0.05, 0.05, 1.0));
+	pl::Layer waterShallow = pl::Layer(waterShallow_level, glm::vec3(0.2, 0.2, 0.3));
+	pl::Layer sand = pl::Layer(sand_level, glm::vec3(0.79, 0.74, 0.57));
+	pl::Layer land1 = pl::Layer(land1_level, powColor(glm::vec3(0.333, 0.419, 0.184), 0.005) * glm::vec3(0.79, 0.74, 0.57) * glm::vec3(0.133, 0.530, 0.133));
+	pl::Layer land2 = pl::Layer(land2_level, glm::vec3(0.333, 0.419, 0.184));   // Land (more olive green)
+	pl::Layer land3 = pl::Layer(land3_level, glm::vec3(0.345, 0.471, 0.074));  // Land (brownish)
+	pl::Layer snow1 = pl::Layer(snow1_level, glm::vec3(0.933, 0.933, 0.933)); // Transition to snow
+	pl::Layer snow2 = pl::Layer(snow2_level, glm::vec3(1.0, 1.0, 1.0));        // Snow
 
 	while (!glfwWindowShouldClose(window)) {
 		// Inputs
@@ -263,6 +252,33 @@ struct Layer {
 		ImGui::DragFloat3("Seed", &planetTopology.seed.x, 0.1f);
 		ImGui::End();
 
+		ImGui::Begin("Layers");
+		ImGui::Text("Water Deep");
+		ImGui::SliderFloat("Water deep altitude", &waterDeep.altitude, -1.0f, 6.0f);
+		ImGui::ColorEdit3("Water deep color", &waterDeep.color.r);
+		ImGui::Text("Water Shallow");
+		ImGui::SliderFloat("Water shallow altitude", &waterShallow.altitude, -1.0f, 6.0f);
+		ImGui::ColorEdit3("Water shallow color", &waterShallow.color.r);
+		ImGui::Text("Sand");
+		ImGui::SliderFloat("Sand altitude", &sand.altitude, -1.0f, 6.0f);
+		ImGui::ColorEdit3("Sand color", &sand.color.r);
+		ImGui::Text("Land 1");
+		ImGui::SliderFloat("Land1 altitude", &land1.altitude, -1.0f, 6.0f);
+		ImGui::ColorEdit3("Land2 color", &land1.color.r);
+		ImGui::Text("Land 2");
+		ImGui::SliderFloat("Land2 altitude", &land2.altitude, -1.0f, 6.0f);
+		ImGui::ColorEdit3("Land2 color", &land2.color.r);
+		ImGui::Text("Land 3");
+		ImGui::SliderFloat("Land3 altitude", &land3.altitude, -1.0f, 6.0f);
+		ImGui::ColorEdit3("Land3 color", &land3.color.r);
+		ImGui::Text("Snow 1");
+		ImGui::SliderFloat("Snow1 altitude", &snow1.altitude, -1.0f, 6.0f);
+		ImGui::ColorEdit3("Snow1 color", &snow1.color.r);
+		ImGui::Text("Snow 2");
+		ImGui::SliderFloat("Snow 2 altitude", &snow2.altitude, -1.0f, 6.0f);
+		ImGui::ColorEdit3("Snow 2 color", &snow2.color.r);
+		ImGui::End();
+
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #pragma endregion
@@ -291,9 +307,9 @@ void processInput(GLFWwindow* window, glm::mat4* model) {
 }
 
 glm::vec3 powColor(glm::vec3 color, float amount) {
-    color.r = pow(color.r, amount);
-    color.g = pow(color.g, amount);
-    color.b = pow(color.b, amount);
-    return color;
+	color.r = pow(color.r, amount);
+	color.g = pow(color.g, amount);
+	color.b = pow(color.b, amount);
+	return color;
 }
 

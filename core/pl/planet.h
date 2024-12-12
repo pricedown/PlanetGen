@@ -5,10 +5,10 @@
 namespace pl {
 
 struct Planet {
-    float minRadius = 1.5f; // scale of the planet mesh & denominator for mountain height
+    float minRadius = 1.5f; // lowest depth
     float maxRadius = 2.5f; // max mountain height
     float mountainRoughness = 1.0f; // exponent to noise
-    float waterLevel = 2.0f; // scale of the water mesh
+    float waterLevel = 2.0f; // scale of the water sphere, used in Layer colors
     float mountainFrequency = 3.0f;
     glm::vec3 seed = glm::vec3(0.0f, 0.0f, 0.0f);
 
@@ -24,7 +24,7 @@ struct Planet {
 // Treated as a ColorStop
 // https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_images/Using_CSS_gradients
 struct Layer {
-    float altitude; // normalized [0-1] from lowest depth to highest peak
+    float altitude; // real scale relative to water radius
     glm::vec3 color;
 
     Layer(float altitude, glm::vec3 color) {
