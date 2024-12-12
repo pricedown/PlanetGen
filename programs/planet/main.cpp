@@ -89,6 +89,8 @@ int main() {
 
 	pl::Planet planetTopology;
 
+	pl::Waves waves;
+
 	pl::Mesh planet = pl::createSphere(1.0, 256);
 	pl::Mesh water = pl::createSphere(1.0, 256);
 
@@ -100,11 +102,6 @@ int main() {
 
 	glm::vec3 waterDeepest = glm::vec3(0.05, 0.05, 1.0);
 	glm::vec3 waterLand = glm::vec3(0.2, 0.2, 0.3);
-
-	struct Layer {
-		float altitude; // normalized [0-1] from lowest depth to highest peak
-		glm::vec3 color;
-	};
 
 	// planet layers
 	float waterDeep_level = -0.9;
@@ -206,6 +203,11 @@ int main() {
 		waterShader.setFloat("waterLevel", planetTopology.waterLevel);
 		waterShader.setFloat("waterAlpha", 0.3f);
 
+		waterShader.setFloat("waveAmplitude", waves.amplitude);
+		waterShader.setFloat("waveFrequency", waves.frequency);
+		waterShader.setFloat("waveSpeed", waves.speed);
+		waterShader.setFloat("time", time);
+
 		container.Bind(GL_TEXTURE0);
 		water.Draw(planetShader);
 
@@ -247,6 +249,12 @@ int main() {
 		ImGui::DragFloat3("Seed", &planetTopology.seed.x, 0.1f);
 		if (ImGui::Button("Randomize Seed"))
 			planetTopology.randomizeSeed();
+		ImGui::End();
+
+		ImGui::Begin("Waves");
+		ImGui::SliderFloat("Waves amplitude", &waves.amplitude, 0.0f, 0.5f);
+		ImGui::SliderFloat("Waves frequency", &waves.frequency, 0.0f, 30.0f);
+		ImGui::SliderFloat("Waves speed", &waves.speed, 0.0f, 15.0f);
 		ImGui::End();
 
 		ImGui::Begin("Layers");

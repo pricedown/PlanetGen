@@ -40,4 +40,18 @@ struct Layer {
     }
 };
 
+struct Waves {
+    float amplitude = 0.004f;
+    float frequency = 19.0f;
+    float speed = periodToSpeed(2.0f);
+
+    float periodToSpeed(float period) {
+		return 1 / (period / 2 * ew::PI);
+    }
+
+    float speedToPeriod(float speed) {
+        return (2 * ew::PI) / speed;
+    }
+};
+
 } // namespace pl
