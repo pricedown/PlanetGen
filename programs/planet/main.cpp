@@ -93,6 +93,9 @@ int main() {
 
 	pl::Mesh planet = pl::createSphere(1.0, 256);
 	pl::Mesh water = pl::createSphere(1.0, 256);
+	float rimLightIntensity = 0.87f;
+	float rimLightShininess = 1.5f;
+	glm::vec3 waterColor = glm::vec3(0.1, 0.1, 0.41);
 
 	pl::Mesh slight = pl::createSphere(1, 64);
 	pl::Mesh space = pl::createSphere(128.0, 256);
@@ -199,7 +202,7 @@ int main() {
 		//transform = glm::scale(transform, glm::vec3(planetTopology.waterLevel));
 		waterShader.setMat4("model", transform);
 
-		waterShader.setVec3("waterColor", glm::vec3(0.0f, 0.0f, 1.0f));
+		waterShader.setVec3("waterColor", waterColor);
 		waterShader.setFloat("waterLevel", planetTopology.waterLevel);
 		waterShader.setFloat("waterAlpha", 0.3f);
 
@@ -207,6 +210,9 @@ int main() {
 		waterShader.setFloat("waveFrequency", waves.frequency);
 		waterShader.setFloat("waveSpeed", waves.speed);
 		waterShader.setFloat("time", time);
+
+		waterShader.setFloat("rimLightIntensity", rimLightIntensity);
+		waterShader.setFloat("rimLightShininess", rimLightShininess);
 
 		container.Bind(GL_TEXTURE0);
 		water.Draw(planetShader);
@@ -251,10 +257,13 @@ int main() {
 			planetTopology.randomizeSeed();
 		ImGui::End();
 
-		ImGui::Begin("Waves");
+		ImGui::Begin("Water");
 		ImGui::SliderFloat("Waves amplitude", &waves.amplitude, 0.0f, 0.5f);
 		ImGui::SliderFloat("Waves frequency", &waves.frequency, 0.0f, 30.0f);
 		ImGui::SliderFloat("Waves speed", &waves.speed, 0.0f, 15.0f);
+		ImGui::SliderFloat("Water rim light intensity", &rimLightIntensity, 0.0f, 2.0f);
+		ImGui::SliderFloat("Water rim light shininess", &rimLightShininess, 0.0f, 2.0f);
+		ImGui::ColorEdit3("Water color", &waterColor.r);
 		ImGui::End();
 
 		ImGui::Begin("Layers");

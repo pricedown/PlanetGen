@@ -18,6 +18,8 @@ uniform float ambientStrength;
 uniform float specularStrength;
 uniform float diffuseStrength;
 uniform float shininess;
+uniform float rimLightIntensity;
+uniform float rimLightShininess;
 
 // water
 uniform float waterAlpha;
@@ -35,19 +37,27 @@ void main() {
     vec3 ambient = ambientStrength * lightColor;
 
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * lightColor * diffuseStrength;
+    vec3 diffuse = diff * lightColor * diffuseStrength * 0.9;
 
     float spec = 0.0;
     if (blinnPhong)
     {
-        spec = pow(max(dot(norm, halfwayDir), 0.0), shininess);
+        spec = pow(max(dot(norm, halfwayDir), 0.0), shininess*1.3);
     }
     else
     {
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess*1.3);
     }
-    vec3 specular = waterColor * lightColor * spec * specularStrength;
+    vec3 specular = waterColor * lightColor * spec * specularStrength*1.4f;
 
-    vec3 result = (ambient + diffuse + specular) * waterColor;
+
+    vec3 rim;
+    float rimF = dot(viewDir, norm);
+    rimF = pow(max(0.0, 1.0 - rimF), rimLightShininess);
+    rim = rimF * rimLightIntensity * lightColor;
+
+    vec3 result = (rim + ambient + diffuse + specular) * waterColor;
+
+
     FragColor = vec4(result, waterAlpha);
 }
