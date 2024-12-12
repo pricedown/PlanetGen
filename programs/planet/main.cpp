@@ -216,7 +216,8 @@ int main() {
 glDepthMask(GL_FALSE);
 		spaceShader.use();
 
-		spaceShader.setMat4("projection", projection);
+		glm::mat4 skyboxProj = camera.perspectiveProjection();
+		spaceShader.setMat4("projection", skyboxProj);
 		spaceShader.setMat4("view", view = glm::mat4(glm::mat3(view)));
 		spaceShader.setInt("skybox", 0);
 

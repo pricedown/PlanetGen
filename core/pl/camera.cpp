@@ -118,6 +118,11 @@ namespace pl {
 		Camera::projection(proj);
 		return proj;
 	}
+	glm::mat4 Camera::perspectiveProjection() const {
+		glm::mat4 proj;
+		proj = glm::perspective(glm::radians(fov), ((float)SCREEN_WIDTH / SCREEN_HEIGHT), 0.1f, 1000.0f);
+		return proj;
+	}
 	glm::mat4 Camera::viewLookAt(glm::mat4& view) const {
 		// Set view position
 		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);

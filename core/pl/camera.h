@@ -32,6 +32,7 @@ namespace pl {
 
         glm::mat4 projection(glm::mat4& projection) const;
         glm::mat4 projection() const;
+        glm::mat4 perspectiveProjection() const;
         glm::mat4 viewLookAt(glm::mat4& view) const;
         glm::mat4 viewLookAt() const;
 
