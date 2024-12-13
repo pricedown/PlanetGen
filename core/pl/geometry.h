@@ -13,9 +13,6 @@ namespace pl {
 	pl::Mesh createSphere(float radius, int subDivisions);
 	pl::Mesh plane(float width, float height, int subdiv);
 
-	extern float quadVertices[];
-	extern float cubeVertices[];
-
     const float skyboxVertices[] = {
         // positions          
         -1.0f,  1.0f, -1.0f,

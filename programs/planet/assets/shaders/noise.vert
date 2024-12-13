@@ -63,38 +63,6 @@ vec2 get_gradient(vec2 pos)
     return vec2(cos(angle), sin(angle));
 }
 
-float perlin_noise(vec2 uv, float cells_count)
-{
-    //Get pos in uv coord
-    vec2 pos_in_grid = uv * cells_count;
-    vec2 cell_pos_in_grid = floor(pos_in_grid);
-    vec2 local_pos_in_cell = pos_in_grid - cell_pos_in_grid;
-
-    //Blend
-    vec2 blend = local_pos_in_cell * local_pos_in_cell * (3.0 - 2.0 * local_pos_in_cell);
-
-    //Get the wraparound
-    float grid_wrap = cells_count;
-    vec2 wrapped_pos = mod(cell_pos_in_grid, grid_wrap);
-
-    //Make it so the sides are the same as each other
-    vec2 left_bottom = wrapped_pos;
-    vec2 right_bottom = mod(wrapped_pos + vec2(1, 0), grid_wrap);
-    vec2 left_top = mod(wrapped_pos + vec2(0, 1), grid_wrap);
-    vec2 right_top = mod(wrapped_pos + vec2(1, 1), grid_wrap);
-
-    float left_bottom_dot = dot(local_pos_in_cell - vec2(0.0, 0.0), get_gradient(left_bottom));
-    float right_bottom_dot = dot(local_pos_in_cell - vec2(1.0, 0.0), get_gradient(right_bottom));
-    float left_top_dot = dot(local_pos_in_cell - vec2(0.0, 1.0), get_gradient(left_top));
-    float right_top_dot = dot(local_pos_in_cell - vec2(1.0, 1.0), get_gradient(right_top));
-
-    float bottom_mix = mix(left_bottom_dot, right_bottom_dot, blend.x);
-    float top_mix = mix(left_top_dot, right_top_dot, blend.x);
-    float noise_value = mix(bottom_mix, top_mix, blend.y);
-
-    return 0.5 + 0.5 * noise_value;
-}
-
 vec2 GetGradient(vec2 intPos, float t) {
     
     // Uncomment for calculated rand
