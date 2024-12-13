@@ -75,17 +75,20 @@ int main() {
 	pl::Planet planetTopology;
 	pl::Waves waves;
 
-	pl::Light light;
-	light.pos = glm::vec3(0.0f, 0.0f, 20.0f);
+	pl::Light planetLight;
+	planetLight.pos = glm::vec3(0.0f, 0.0f, 20.0f);
+	planetLight.rimK = 0.3;
+	planetLight.rimFalloff = 1.2;
 
+	glm::vec3 waterColor = glm::vec3(0.1, 0.1, 0.41);
 	pl::Light waterLight;
-	waterLight.pos = glm::vec3(0.0f, 0.0f, 4.0f);
+	waterLight.pos = planetLight.pos;
 	waterLight.specularK = 1.4f;
+	waterLight.rimColor = glm::vec3(0.1,0.1,0.78);
 	waterLight.diffuseK *= 0.9f;
 	waterLight.shininess *= 1.3f;
 	waterLight.rimK = 1.4;
 	float waterAlpha = 0.3f;
-	glm::vec3 waterColor = glm::vec3(0.1, 0.1, 0.41);
 
 	pl::Layer waterDeep = pl::Layer(-0.9, glm::vec3(0.05, 0.05, 1.0));
 	pl::Layer waterShallow = pl::Layer(-0.1, glm::vec3(0.2, 0.2, 0.3));
@@ -145,14 +148,14 @@ int main() {
 		// light box
 		lightShader.use();
 		glm::mat4 lightModel = glm::mat4(1.0f);
-		lightModel = glm::translate(lightModel, light.pos);
+		lightModel = glm::translate(lightModel, planetLight.pos);
 		lightModel = glm::scale(lightModel, glm::vec3(0.2f));
 		lightShader.setMat4("projection", projection);
 		lightShader.setMat4("view", view);
 		lightShader.setMat4("model", lightModel);
 		
-		lightShader.setVec3("lightPos", light.pos);
-		lightShader.setVec3("lightColor", light.color);
+		lightShader.setVec3("lightPos", planetLight.pos);
+		lightShader.setVec3("lightColor", planetLight.color);
 		lightShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 		slight.Draw(lightShader);
 
@@ -160,7 +163,7 @@ int main() {
 		glEnable(GL_DEPTH_TEST);
 		planetShader.use();
 
-		planetShader.setLight(light);
+		planetShader.setLight(planetLight);
 		planetShader.setVec3("viewPos", camera.getPosition());
 		planetShader.setMat4("projection", projection);
 		planetShader.setMat4("view", view);
@@ -233,13 +236,16 @@ glDepthMask(GL_TRUE);
 		ImGui::NewFrame();
 
 		ImGui::Begin("Lighting");
-		ImGui::Checkbox("Blinn-Phong", &light.blinnPhong);
-		ImGui::DragFloat3("Light Position", &light.pos.x, 0.1f);
-		ImGui::ColorEdit3("Light Color", &light.color.r);
-		ImGui::SliderFloat("Ambient K", &light.ambientK, 0.0f, 1.0f);
-		ImGui::SliderFloat("Diffuse K", &light.diffuseK, 0.0f, 1.0f);
-		ImGui::SliderFloat("Specular K", &light.specularK, 0.0f, 1.0f);
-		ImGui::SliderFloat("Shininess", &light.shininess, 2.0f, 1024.0f);
+		ImGui::Checkbox("Blinn-Phong", &planetLight.blinnPhong);
+		ImGui::DragFloat3("Light Position", &planetLight.pos.x, 0.1f);
+		ImGui::ColorEdit3("Light Color", &planetLight.color.r);
+		ImGui::SliderFloat("Ambient K", &planetLight.ambientK, 0.0f, 1.0f);
+		ImGui::SliderFloat("Diffuse K", &planetLight.diffuseK, 0.0f, 1.0f);
+		ImGui::SliderFloat("Specular K", &planetLight.specularK, 0.0f, 1.0f);
+		ImGui::SliderFloat("Shininess", &planetLight.shininess, 2.0f, 1024.0f);
+		ImGui::SliderFloat("Rim intensity", &planetLight.rimK, 0.0f, 5.0);
+		ImGui::SliderFloat("Rim falloff", &planetLight.rimFalloff, 0.0f, 7.0f);
+		ImGui::ColorEdit3("Rim color", &planetLight.rimColor.r);
 		ImGui::End();
 
 		ImGui::Begin("Planet");
@@ -254,13 +260,16 @@ glDepthMask(GL_TRUE);
 		ImGui::End();
 
 		ImGui::Begin("Water");
+		ImGui::Text("Water Color");
+		ImGui::SliderFloat("Water alpha", &waterAlpha, 0.0, 1.0);
+		ImGui::ColorEdit3("Water color", &waterColor.r);
+		ImGui::ColorEdit3("Water rim light color", &waterLight.rimColor.r);
+		ImGui::SliderFloat("Water rim light intensity", &waterLight.rimK, 0.0f, 2.0f);
+		ImGui::SliderFloat("Water rim light falloff", &waterLight.rimFalloff, 0.0f, 7.0f);
+		ImGui::Text("Waves");
 		ImGui::SliderFloat("Waves amplitude", &waves.amplitude, 0.0f, 0.5f);
 		ImGui::SliderFloat("Waves frequency", &waves.frequency, 0.0f, 30.0f);
 		ImGui::SliderFloat("Waves speed", &waves.speed, 0.0f, 15.0f);
-		ImGui::SliderFloat("Water rim light intensity", &waterLight.rimK, 0.0f, 2.0f);
-		ImGui::SliderFloat("Water rim light falloff", &waterLight.rimFalloff, 0.0f, 2.0f);
-		ImGui::ColorEdit3("Water color", &waterColor.r);
-		ImGui::SliderFloat("Water alpha", &waterAlpha, 0.0, 1.0);
 		ImGui::End();
 
 		ImGui::Begin("Layers");

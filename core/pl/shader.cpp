@@ -100,6 +100,7 @@ namespace pl {
 	void Shader::setLight(const pl::Light& light) const {
 		setVec3("lightPos", light.pos);
 		setVec3("lightColor", light.color);
+		setVec3("rimColor", light.rimColor);
 		setFloat("ambientStrength", light.ambientK);
 		setFloat("specularStrength", light.specularK);
 		setFloat("diffuseStrength", light.diffuseK);

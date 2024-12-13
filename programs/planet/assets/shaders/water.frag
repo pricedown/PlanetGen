@@ -14,6 +14,7 @@ uniform vec3 viewPos;
 uniform bool blinnPhong;
 uniform vec3 lightColor;
 uniform vec3 lightPos;  
+uniform vec3 rimColor;  
 uniform float ambientStrength;
 uniform float specularStrength;
 uniform float diffuseStrength;
@@ -61,7 +62,7 @@ vec3 litColor(vec3 objectColor) {
     vec3 rim;
     float rimI = 1.0 - dot(viewDir, norm);
     rimI = pow(max(0.0, rimI), rimFalloff);
-    rim = rimI * rimStrength * lightColor;
+    rim = rimI * rimStrength * rimColor;
 
    return (rim + ambient + diffuse + specular) * waterColor;
 }

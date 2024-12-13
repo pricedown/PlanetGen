@@ -22,6 +22,7 @@ uniform float diffuseStrength;
 uniform float shininess;
 uniform float rimStrength;
 uniform float rimFalloff;
+uniform vec3 rimColor;
 
 // planet topology
 uniform float minRadius;
