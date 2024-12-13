@@ -29,7 +29,7 @@ const int SCREEN_HEIGHT = 1080;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-void processInput(GLFWwindow* window, glm::mat4* model);
+void processInput(GLFWwindow* window, glm::mat4* model, pl::Camera cam);
 
 glm::vec3 powColor(glm::vec3 color, float amount);
 
@@ -133,8 +133,8 @@ int main() {
 		glm::mat4 projection = camera.projection();
 		glm::mat4 view = camera.viewLookAt();
 
-		processInput(window, &planetTransform);
-		processInput(window, &waterTransform);
+		processInput(window, &planetTransform, camera);
+		processInput(window, &waterTransform, camera);
 
 		// Draw
 		// background
@@ -300,7 +300,7 @@ glDepthMask(GL_TRUE);
 }
 
 // Caleb Carreon
-void processInput(GLFWwindow* window, glm::mat4* model) {
+void processInput(GLFWwindow* window, glm::mat4* model, pl::Camera cam) {
 	float rotationSpeed = 2.0f * deltaTime;
 	glm::mat4 rotMatrix = glm::mat4(1.0f);
 	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
@@ -310,10 +310,10 @@ void processInput(GLFWwindow* window, glm::mat4* model) {
 		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(0.0f, -1.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(1.0f, 0.0f, 0.0f));
+		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::cross(glm::vec3(0.0f, -1.0f, 0.0f), cam.getPosition()));
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::vec3(-1.0f, 0.0f, 0.0f));
+		rotMatrix = glm::rotate(rotMatrix, rotationSpeed, glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), cam.getPosition()));
 	}
 	*model = rotMatrix * (*model);
 }
