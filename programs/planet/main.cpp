@@ -43,7 +43,7 @@ int main() {
 		printf("GLFW failed to init!");
 		return 1;
 	}
-	window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello Triangle", NULL, NULL);
+	window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "PlanetGen", NULL, NULL);
 	if (window == NULL) {
 		printf("GLFW failed to create window");
 		return 1;
@@ -77,21 +77,21 @@ int main() {
 
 	pl::Light light;
 	light.pos = glm::vec3(0.0f, 0.0f, 20.0f);
-	light.ambientK = 0.8f;
-	light.diffuseK = 0.8f;
 
 	pl::Light waterLight;
 	waterLight.pos = glm::vec3(0.0f, 0.0f, 4.0f);
-	waterLight.specularK = 1.0f;
+	waterLight.specularK = 1.4f;
+	waterLight.diffuseK *= 0.9f;
+	waterLight.shininess *= 1.3f;
+	waterLight.rimK = 1.4;
+	float waterAlpha = 0.3f;
 	glm::vec3 waterColor = glm::vec3(0.1, 0.1, 0.41);
-	float rimLightIntensity = 1.4f;
-	float rimLightShininess = 0.6f;
 
 	pl::Layer waterDeep = pl::Layer(-0.9, glm::vec3(0.05, 0.05, 1.0));
 	pl::Layer waterShallow = pl::Layer(-0.1, glm::vec3(0.2, 0.2, 0.3));
 	pl::Layer sand = pl::Layer(0, glm::vec3(0.79, 0.74, 0.57));
 	pl::Layer land1 = pl::Layer(0.1, powColor(glm::vec3(0.333, 0.419, 0.184), 0.005) * glm::vec3(0.79, 0.74, 0.57) * glm::vec3(0.133, 0.530, 0.133));
-	pl::Layer land2 = pl::Layer(0.25, glm::vec3(0.333, 0.419, 0.184));   // Land (more olive green)
+	pl::Layer land2 = pl::Layer(0.25, glm::vec3(0.333, 0.419, 0.184)); // Land (more olive green)
 	pl::Layer land3 = pl::Layer(0.3, glm::vec3(0.345, 0.471, 0.074));  // Land (brownish)
 	pl::Layer snow1 = pl::Layer(0.35, glm::vec3(0.933, 0.933, 0.933)); // Transition to snow
 	pl::Layer snow2 = pl::Layer(0.5, glm::vec3(1.0, 1.0, 1.0));        // Snow
@@ -101,7 +101,7 @@ int main() {
 	pl::Shader waterShader = pl::Shader("assets/shaders/water.vert", "assets/shaders/water.frag");
 	pl::Shader lightShader = pl::Shader("assets/shaders/light.vert", "assets/shaders/light.frag");
 	pl::Shader spaceShader = pl::Shader("assets/shaders/space.vert", "assets/shaders/space.frag");
-	pl::Texture2D container = pl::Texture2D("assets/textures/Texturelabs_Soil_134L.jpg", GL_LINEAR, GL_REPEAT);
+	pl::Texture2D container = pl::Texture2D("assets/textures/seamless-sand.jpg", GL_LINEAR, GL_REPEAT);
 
     std::vector<std::string> faces;
     faces.push_back("assets/textures/skybox/right.png");
@@ -198,15 +198,15 @@ int main() {
 
 		waterShader.setVec3("waterColor", waterColor);
 		waterShader.setFloat("waterLevel", planetTopology.waterLevel);
-		waterShader.setFloat("waterAlpha", 0.3f);
+		waterShader.setFloat("waterAlpha", waterAlpha);
 
 		waterShader.setFloat("waveAmplitude", waves.amplitude);
 		waterShader.setFloat("waveFrequency", waves.frequency);
 		waterShader.setFloat("waveSpeed", waves.speed);
 		waterShader.setFloat("time", time);
 
-		waterShader.setFloat("rimLightIntensity", rimLightIntensity);
-		waterShader.setFloat("rimLightShininess", rimLightShininess);
+		waterShader.setFloat("rimLightIntensity", waterLight.rimK);
+		waterShader.setFloat("rimLightExponent", waterLight.rimFalloff);
 
 		container.Bind(GL_TEXTURE0);
 		water.Draw(planetShader);
@@ -257,9 +257,10 @@ glDepthMask(GL_TRUE);
 		ImGui::SliderFloat("Waves amplitude", &waves.amplitude, 0.0f, 0.5f);
 		ImGui::SliderFloat("Waves frequency", &waves.frequency, 0.0f, 30.0f);
 		ImGui::SliderFloat("Waves speed", &waves.speed, 0.0f, 15.0f);
-		ImGui::SliderFloat("Water rim light intensity", &rimLightIntensity, 0.0f, 2.0f);
-		ImGui::SliderFloat("Water rim light shininess", &rimLightShininess, 0.0f, 2.0f);
+		ImGui::SliderFloat("Water rim light intensity", &waterLight.rimK, 0.0f, 2.0f);
+		ImGui::SliderFloat("Water rim light falloff", &waterLight.rimFalloff, 0.0f, 2.0f);
 		ImGui::ColorEdit3("Water color", &waterColor.r);
+		ImGui::SliderFloat("Water alpha", &waterAlpha, 0.0, 1.0);
 		ImGui::End();
 
 		ImGui::Begin("Layers");

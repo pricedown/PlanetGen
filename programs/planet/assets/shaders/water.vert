@@ -22,12 +22,11 @@ uniform float waveSpeed;
 void main() {
 	float height = waterLevel;
 	float waveHeight = 0.0;
-	// randomly overlapping waves
+	// arbitrary overlapping waves
     waveHeight += waveAmplitude * sin((waveFrequency * (aPos.x + aPos.y) + waveSpeed * time));
     waveHeight += 0.5 * waveAmplitude * sin((2.0 * waveFrequency * (aPos.x + aPos.z) + waveSpeed * time));
     waveHeight += 0.3 * waveAmplitude * sin((0.5 * waveFrequency * (aPos.x - aPos.z) + waveSpeed * time));
     height += waveHeight;
-	height += waveHeight;
 
 	vec3 pos = height * aNormal;
 	gl_Position = projection * view * model * vec4(pos,1.0);

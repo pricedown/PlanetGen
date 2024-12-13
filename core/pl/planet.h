@@ -30,7 +30,7 @@ struct Layer {
 };
 
 struct Waves {
-    float amplitude = 0.004f;
+    float amplitude = 0.007f;
     float frequency = 19.0f;
     float speed = periodToSpeed(2.0f);
 

@@ -103,6 +103,8 @@ namespace pl {
 		setFloat("ambientStrength", light.ambientK);
 		setFloat("specularStrength", light.specularK);
 		setFloat("diffuseStrength", light.diffuseK);
+		setFloat("rimStrength", light.rimK);
+		setFloat("rimFalloff", light.rimFalloff);
 		setFloat("shininess", light.shininess);
 		setBool("blinnPhong", light.blinnPhong);
 	}

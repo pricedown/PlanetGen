@@ -20,6 +20,8 @@ uniform float ambientStrength;
 uniform float specularStrength;
 uniform float diffuseStrength;
 uniform float shininess;
+uniform float rimStrength;
+uniform float rimFalloff;
 
 // planet topology
 uniform float minRadius;
@@ -52,7 +54,7 @@ float grayScale(vec3 color);
 vec3 altitudeColor(float altitude);
 
 void main() {
-  vec3 objectColor = vec3(texture(tex,TexCoord));
+  vec3 objectColor = vec3(texture(tex,TexCoord*5));
 
   vec3 altitudeCol;
   layers[0] = waterDeep;
@@ -70,17 +72,20 @@ void main() {
 }
 
 vec3 altitudeColor(float altitude) {
-  if (layers[0].altitude > altitude)
+  // clamp lowest
+  if (layers[0].altitude > altitude) 
     return layers[0].color;
 
+  // clamp highest
   if (layers[LAYER_COUNT-1].altitude < altitude)
     return layers[LAYER_COUNT-1].color;
 
   for (int i = 0; i < LAYER_COUNT-1; i++) {
-    // check if between layers
+    // if between layers
     if (layers[i].altitude < altitude && layers[i+1].altitude > altitude) {
-      // blend between layers
-      float t = (altitude - layers[i].altitude) / (layers[i + 1].altitude - layers[i].altitude);
+      // interpolate color
+      float t = (altitude - layers[i].altitude) 
+              / (layers[i+1].altitude - layers[i].altitude);
       return mix(layers[i].color, layers[i+1].color, t);
     }
   }
@@ -108,8 +113,12 @@ vec3 litColor(vec3 objectColor) {
     spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
   vec3 specular = lightColor * spec * specularStrength;
 
-  vec3 result = (ambient + diffuse + specular) * objectColor;
-  return result;
+  vec3 rim;
+  float rimI = 1.0 - dot(viewDir, norm);
+  rimI = pow(max(0.0, rimI), rimFalloff);
+  rim = rimI * rimStrength * lightColor;
+
+  return (rim + ambient + diffuse + specular) * objectColor;
 }
 
 float grayScale(vec3 color) {

@@ -27,13 +27,8 @@ uniform vec3 seed;
 
 float Pseudo3dNoise(vec3 pos);
 
-float normalizedToRadius(float normalizedAltitude) {
-    return minRadius + normalizedAltitude * abs(maxRadius - minRadius);
-}
-
-float radiusToNormalized(float radius) {
-    return (radius - minRadius) / abs(maxRadius - minRadius);
-}
+float normalizedToRadius(float normalizedAltitude);
+float radiusToNormalized(float radius);
 
 void main()
 {
@@ -130,6 +125,14 @@ float Pseudo3dNoise(vec3 pos) {
         blend.y
     );
     return 0.5 + 0.5 * (noiseVal / 0.7); // normalize to about [-1..1]
+}
+
+float normalizedToRadius(float normalizedAltitude) {
+    return minRadius + normalizedAltitude * abs(maxRadius - minRadius);
+}
+
+float radiusToNormalized(float radius) {
+    return (radius - minRadius) / abs(maxRadius - minRadius);
 }
 
 //https://www.shadertoy.com/view/DsK3W1
