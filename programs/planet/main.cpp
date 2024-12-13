@@ -76,6 +76,7 @@ int main() {
 	pl::Waves waves;
 
 	pl::Light planetLight;
+	planetLight.ambientK = 0.375f;
 	planetLight.pos = glm::vec3(0.0f, 0.0f, 20.0f);
 	planetLight.rimK = 0.3;
 	planetLight.rimFalloff = 1.2;
@@ -104,7 +105,7 @@ int main() {
 	pl::Shader waterShader = pl::Shader("assets/shaders/water.vert", "assets/shaders/water.frag");
 	pl::Shader lightShader = pl::Shader("assets/shaders/light.vert", "assets/shaders/light.frag");
 	pl::Shader spaceShader = pl::Shader("assets/shaders/space.vert", "assets/shaders/space.frag");
-	pl::Texture2D container = pl::Texture2D("assets/textures/seamless-sand.jpg", GL_LINEAR, GL_REPEAT);
+	pl::Texture2D container = pl::Texture2D("assets/textures/Texturelabs_Soil_134L.jpg", GL_LINEAR, GL_REPEAT);
 
     std::vector<std::string> faces;
     faces.push_back("assets/textures/skybox/right.png");
